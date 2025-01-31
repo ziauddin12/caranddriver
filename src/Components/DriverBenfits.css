@@ -1,0 +1,129 @@
+/* General styles */
+body {
+  margin: 0;
+  padding: 0;
+  /* font-family: 'Poppins', sans-serif; */
+  /* Light gray background */
+}
+
+.HomeDriver {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  /* background-color: #cccccc; */
+  background-color: white;
+}
+
+.homeContainerDriver {
+  /* max-width: 700px; */
+  width: 100%;
+  /* text-align: center; */
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  /* align-items: center; */
+
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 89%;
+}
+
+.headingDriver {
+  font-size: 30px;
+  font-weight: bold;
+  color: #282828;
+  margin-bottom: 20px;
+
+  /* text-align: start; */
+}
+.redlineDriver {
+  display: inline-block;
+  position: relative;
+}
+.redlineDriver::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 6px;
+  width: 144px;
+  height: 4px; /* Thickness of the underline */
+  background-color: #cc412f; /* Underline color */
+}
+.CarFontDriver {
+  /* font-size: 22px; */
+  color: #585858;
+  font-weight: 50;
+}
+.headingDriver span {
+  display: inline-block;
+}
+
+.homeDriverHeadingDriver {
+  margin-bottom: 20px;
+}
+
+.homeDriverHeadingDriver h5 {
+  font-size: 22px;
+  color: #282828;
+  margin-bottom: 10px;
+}
+
+.homeDriverHeadingDriver p {
+  font-size: 14px;
+  color: #282525;
+  line-height: 1.6;
+}
+
+.homeDriverHeadingDriver p span {
+  /* display: block; Ensure spans stack in mobile view */
+}
+
+.buttonContainerDriver {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btnDriver {
+  padding: 10px 40px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #de7233;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btnDriver:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive styles */
+@media (max-width: 700px) {
+  .homeContainer {
+    padding: 15px;
+    margin: 0 10px; /* Adds gap on both sides */
+  }
+.imghide{
+  display: none;
+}
+  .heading {
+    font-size: 20px;
+  }
+
+  .homeDriverHeading h5 {
+    font-size: 16px;
+  }
+
+  .homeDriverHeading p {
+    font-size: 13px;
+  }
+  .tickIcon{
+    display: none;
+  }
+  /*   
+    button {
+      width: 100%;
+    } */
+}

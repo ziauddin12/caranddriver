@@ -1,0 +1,167 @@
+/* StartFinding.css */
+
+.hero-container {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  /* text-align: center; */
+  /* height: 100vh; */
+  /* border: 2px solid red; */
+  background: url("../assets/black-car-is-driving-down-street-with-reflection-license-plate-it_1049207-23637-scaled-2.jpg")
+    no-repeat center center/cover;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid gray; */
+  /* max-width: 700px; */
+  width: 100%;
+  /* margin: 0 auto; */
+  /* background-color: rgb(72 72 72 / 80%); */
+  background-color: rgb(30 29 29 / 80%);
+
+  padding: 20px;
+  border-radius: 8px;
+}
+
+h1,
+h2 {
+  /* margin: 0; */
+  font-family: Arial, sans-serif;
+}
+
+.hero-content h1 {
+  font-size: 4.4rem;
+  font-weight: 200;
+  color: #cccccc;
+  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
+  /* margin: 15px 0px 100px 0px; */
+}
+.lightweight {
+  font-weight: 100;
+}
+/* h2 {
+    font-size: 1.5rem;
+    font-weight: normal;
+  } */
+
+.highlight {
+}
+
+.divider1 {
+
+  border-top: 4px solid #FE5B37;
+  width: 200px;
+  margin: 17px auto;
+}
+.description {
+  margin: 24px 0px;
+  font-weight: 100;
+  color: #cccccc;
+  max-width: 684px;
+  text-align: center;
+}
+.description span {
+  font-family: "Poppins", sans-serif;
+
+  /* display: block; */
+  font-size: 1.7rem;
+  
+  font-family: Arial, sans-serif;
+  margin-bottom: 5px;
+  
+}
+
+.cta-buttons {
+  /* margin-top: 20px; */
+  text-align: center;
+  display: flex;
+  /* gap: 35px; */
+}
+
+.cta-primary {
+  /* background-color: none; */
+  background: white;
+  color: black;
+  border: none;
+  padding: 12px 49px;
+  border-radius: 5px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 10px 10px;
+  text-transform: uppercase; /* Ensures it's capitalized */
+}
+
+.cta-buttons button.cta-secondary {
+  background-color: #555;
+  background: none;
+  color: white;
+  border: none;
+  /* padding: 10px 20px; */
+  border-radius: 5px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 10px 0px;
+  margin-left: 22px;
+  text-transform: uppercase; /* Ensures it's capitalized */
+  text-decoration: underline;
+
+
+}
+
+.cta-buttons button:hover {
+  opacity: 0.9;
+}
+
+.divider2 {
+  display: none;
+  border: 2px solid #e8551e;
+  /* border-top: 3px solid #333; */
+  width: 230px;
+  margin: 1px 0px 0px 0px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  /* h1 {
+      font-size: 1.8rem;
+    } */
+
+  /* h2 {
+      font-size: 1.2rem;
+    } */
+    .hero-content h1 {
+      font-size: 2.4rem;
+      margin: 0px 0px;
+      
+    }
+  .cta-buttons button {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  .description {
+    text-align: start;
+  }
+  .description span{
+display: block;
+font-size: 1.3rem;
+  }
+  .cta-buttons{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .divider2{
+    display: block;
+    margin-top: 19px;
+  }
+  .capitalD{
+    font-size: 31px;
+  }
+}

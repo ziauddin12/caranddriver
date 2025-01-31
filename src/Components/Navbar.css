@@ -1,0 +1,235 @@
+* {
+  padding: 0;
+  margin: 0;
+  /* border: none; */
+  font-family: "Poppins", sans-serif;
+}
+
+/*.navBg{
+   width: 100%;
+  height: 120px;
+  background: url("./Images/cup-2619216_1280.jpg");
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  
+}*/
+
+.navbar {
+  width: 100%;
+  height: 120px;
+  background: url("./Images/cup-2619216_1280.jpg");
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* max-width: 1000px; */
+  margin: 0 auto;
+}
+.navbar-links {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: 39px;
+  padding: 20px 52px;
+  margin-left: 217px;
+  font-size: 1.1rem;
+  font-family: "Poppins", sans-serif;
+  border-radius: 14px;
+  z-index: 0;
+}
+
+.navbar-links::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 95%;
+  height: 100%;
+  background-color: rgb(50, 50, 50);
+  opacity: 0.8;
+  border-radius: 14px;
+  z-index: -1;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  cursor: pointer;
+}
+
+.navbar-links li a.active-link {
+  /* Red color for active link */
+  text-decoration: underline;
+  text-decoration-color: red;
+  font-size: 18px; /* Increased font size */
+}
+.navbar-logo img {
+  width: 134px;
+  height: auto;
+}
+.user-icon {
+  color: white;
+
+  padding: 12px;
+  border-radius: 30px;
+  background-color: #6798ff;
+}
+
+.navbar-signup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 45px;
+}
+
+.signup-button {
+  background-color: #6798ff;
+  padding: 12px 23px;
+  border-radius: 10px;
+  color: white;
+  font-family: "Playfair Display", serif;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Hamburger Icon */
+.hamburger-icon {
+  display: none;
+  font-size: 1.8rem;
+  color: black;
+  cursor: pointer;
+  margin-right: 36px;
+}
+/* Mobile Menu */
+.navbar-links.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  z-index: 10;
+  /* width: calc(100% - 40px); */
+}
+.navbar-links.mobile-menu a {
+  margin: 10px 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .navbar {
+    background: none;
+    background-color: black;
+  }
+  .navbar-links {
+    display: none;
+  }
+
+  .hamburger-icon {
+    display: block;
+    color: white;
+  }
+
+  .navbar-signup {
+    display: none;
+  }
+}
+.showSignUp{
+  display: none;
+}
+
+.navbar-profile {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  width: 150px;
+  z-index: 1000;
+}
+
+.profile-dropdown li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.profile-dropdown li:hover {
+  background: #f0f0f0;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .navbar {
+    /* height: auto;  Adjust height dynamically */
+    padding: 10px 0px;
+  }
+
+  .navbar-links {
+    gap: 15px; /* Reduce gap between items */
+  }
+
+  .signup-button {
+    padding: 8px 15px; /* Adjust button size */
+    font-size: 0.8rem;
+  }
+
+  .user-icon {
+    padding: 8px; /* Adjust icon size */
+  }
+  .showSignUp{
+    display: block;
+  }
+}
+
+
+/* Language Dropdown */
+.navbar-language {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  /* margin-right: 29px; */
+}
+
+.language-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  margin-right: 11px;
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  list-style: none;
+  padding: 10px 0;
+  z-index: 10;
+  min-width: 150px;
+}
+
+.language-dropdown li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.language-dropdown li:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}

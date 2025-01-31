@@ -1,0 +1,121 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+.registerContainer {
+  /* border: 3px solid red; */
+  width: 100%;
+  max-width: 509px;
+  margin: 0px auto;
+
+}
+.label-gap1 {
+  border: 1.5px solid gray;
+  margin-left: 16.1rem;
+  width: 200px;
+  height: 30px;
+}
+.label-gap4 {
+  border: 1.5px solid gray;
+  margin-left: 8.1rem;
+  width: 200px;
+  height: 30px;
+}
+.label-gap2 {
+  border: 1.5px solid gray;
+  margin-left: 14rem;
+  width: 200px;
+  height: 30px;
+}
+.label-gap5 {
+  border: 1.5px solid gray;
+  margin-left: 8.4rem;
+  width: 200px;
+  height: 30px;
+}
+.label-gap3 {
+  border: 1.5px solid gray;
+  margin-left: 9.8rem;
+  width: 200px;
+  height: 30px;
+}
+.label-gap6 {
+  border: 1.5px solid gray;
+  margin-left: 10.6rem;
+  width: 200px;
+  height: 30px;
+}
+.fields {
+  margin: 30px 0px;
+}
+.checkbox {
+  margin-right: 7px;
+  width: 15px;
+  height: 15px;
+}
+.registerBtn {
+  color: white;
+  display: flex;
+  /* flex-direction: column; */
+    justify-content: center;
+    align-items: center;
+    max-width: 239px;
+    width: 100%;
+    margin: 20px auto;
+    background-color: #FB5E36;
+  padding: 9px 19px;
+  /* width: 93%; */
+
+  /* margin: 20px 15px; */
+  border-radius: 10px;
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+@media (max-width: 576px) {
+  .registerContainer {
+    max-width: 350px;
+  }
+
+  .label-gap1 {
+    border: 1.5px solid gray;
+    margin-left: 9rem;
+    width: 120px;
+    height: 24px;
+  }
+  .label-gap2 {
+    border: 1.5px solid gray;
+    margin-left: 7rem;
+    width: 120px;
+    height: 24px;
+  }
+  .label-gap3 {
+    border: 1.5px solid gray;
+    margin-left: 2.7rem;
+    width: 120px;
+    height: 24px;
+  }
+
+  .label-gap4 {
+    border: 1.5px solid gray;
+    margin-left: 2.1rem;
+    width: 200px;
+    height: 30px;
+  }
+  .label-gap5 {
+    border: 1.5px solid gray;
+    margin-left: 2.4rem;
+    width: 200px;
+    height: 30px;
+  }
+
+
+  .label-gap6 {
+    border: 1.5px solid gray;
+    margin-left: 4.6rem;
+    width: 200px;
+    height: 30px;
+  }
+}

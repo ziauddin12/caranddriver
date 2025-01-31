@@ -1,0 +1,110 @@
+/* Updated CSS */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+.Home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+}
+
+.homeContainer {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  gap: 60px;
+  max-width: 89%;
+}
+
+.heading {
+  font-size: 30px;
+  font-weight: bold;
+  color: #282828;
+  margin-bottom: 20px;
+}
+
+.redline {
+  display: inline-block;
+  position: relative;
+}
+
+.redline::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 6px;
+  width: 185px;
+  height: 4px;
+  background-color: #cc412f;
+}
+
+.CarFont {
+  /* font-size: 22px; */
+  color: #585858;
+  font-weight: 500;
+}
+
+.homeDriverHeading {
+  margin-bottom: 20px;
+}
+
+.homeDriverHeading h5 {
+  font-size: 22px;
+  color: #282828;
+  margin-bottom: 10px;
+}
+
+.homeDriverHeading p {
+  font-size: 14px;
+  color: #282525;
+  line-height: 1.6;
+}
+
+.buttonContainer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.buttonContainer button {
+  padding: 10px 66px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #de7233;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.buttonContainer button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Styles */
+@media (max-width: 700px) {
+  .homeContainer {
+    flex-direction: column;
+    gap: 15px;
+  }
+.homeContainer img{
+  display: none;
+}
+  .heading {
+    font-size: 20px;
+  }
+
+  .homeDriverHeading h5 {
+    font-size: 16px;
+  }
+
+  .homeDriverHeading p {
+    font-size: 13px;
+  }
+}
