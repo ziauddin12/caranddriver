@@ -7,6 +7,7 @@ import { TfiEmail } from "react-icons/tfi";
 import { GoBell } from "react-icons/go";
 import { TfiWallet } from "react-icons/tfi";
 import { CiUser } from "react-icons/ci"; 
+import { FaCalendarAlt } from "react-icons/fa";
 //import { IoIosArrowDown } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
 import cloudcomputing from "../assets/cloudcomputing.png";
@@ -18,6 +19,10 @@ import IMAGE_API from '../Components/services/ImgBase';
 import UserProfile from '../Components/UserProfile';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { subYears } from "date-fns"; // Import date-fns function
 
 
 
@@ -41,6 +46,8 @@ const DriverEditForm = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const [userData, setUserData] = useState({
     experience: "",
@@ -96,9 +103,19 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const CustomInput = ({ value, onClick }) => (
+  <button 
+    onClick={onClick} 
+    className="w-full flex items-center justify-between px-3 py-2  rounded-md outline-none bg-white"
+  >
+    {value || "Select Date"}
+    <FaCalendarAlt className="text-gray-500" />
+  </button>
+);
+
 
 // Use this formatted date for display purposes
-const formattedDate = formatDate(userData?.dateOfBirth);
+//setSelectedDate(userData?.dateOfBirth);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -139,12 +156,16 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   const handleSubmit = async (e) => {
     e.preventDefault();
      
+     
     if (validateForm()) {
     try {
 
       const userId = localStorage.getItem('userId'); 
+
+      // Update userData with the formatted date
+      const updatedUserData = { ...userData, dateOfBirth: selectedDate };
       // Use the `put` method from your API service
-      const response = await API.put(`/users/${userId}`, userData); // Ensure the endpoint matches your API
+      const response = await API.put(`/users/${userId}`, updatedUserData); // Ensure the endpoint matches your API
       
       if (response.status === 200) { // Assuming a 200 status code means success 
         setModalMessage("Profile updated successfully!");
@@ -181,6 +202,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
 
     const formData = new FormData(); 
     formData.append("profileImage", file);
+    
 
     try {
       const userId = localStorage.getItem("userId"); // Assuming userId is stored in localStorage
@@ -273,8 +295,18 @@ const formattedDate = formatDate(userData?.dateOfBirth);
     }
   };
   
-
+   // Calculate the max selectable date (18 years ago)
+  const minAgeDate = subYears(new Date(), 18);
   const closeModal = () => setShowModal(false);
+
+  // Fetch dateOfBirth from database (example from localStorage or API)
+  useEffect(() => {
+    const dateOfBirthFromDB = userData?.dateOfBirth; // Or fetch from API
+    if (dateOfBirthFromDB) {
+      // Convert to Date object if necessary
+      setSelectedDate(new Date(dateOfBirthFromDB));
+    }
+  }, [userData?.dateOfBirth]);
   
   return (
     <>
@@ -295,7 +327,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                 <table className="w-full border-[#000000]">
                   <tbody>
                     <tr className=" border-y-[1px] lg:border-y-2 border-b-[1px] lg:border-b-2 border-[#000000]">
-                      <td className="px-3 font-thin lg:font-semibold text-lg lg:text-xl py-1">
+                      <td className="px-3 w-1/2 font-thin lg:font-semibold text-sm lg:text-xl py-1">
                         
                         {t("experience")}
                       </td>
@@ -306,67 +338,78 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                           value={userData?.experience}
                           onChange={handleInputChange}
                           placeholder="In Years"
-                          className="w-full placeholder:text-black bg-transparent outline-none"
+                          className="w-full p-1.5 placeholder:text-black bg-transparent outline-none"
                         />
                       </td>
                     </tr>
                     <tr className=" border-b-[1px] lg:border-b-2 border-[#000000]">
-                      <td className="px-3  font-thin lg:font-semibold text-lg lg:text-xl py-1">
+                      <td className="px-3  font-thin lg:font-semibold text-sm lg:text-xl py-1">
                         {t("idNumber")}
                       </td>
                       <td className="border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
                         <input
-                          type="text"
+                          type="number"
                           name="idNumber"
                           value={userData?.idNumber}
                           onChange={handleInputChange}
                           placeholder="Number"
-                          className="w-full placeholder:text-black bg-transparent outline-none"
+                          className="w-full p-1.5 placeholder:text-black bg-transparent outline-none"
                         />
                       </td>
                     </tr>
                     <tr className="border-b-[1px] lg:border-b-2 border-[#000000]">
-                      <td className="px-3 font-thin lg:font-semibold text-lg lg:text-xl py-1">
+                      <td className="px-3 font-thin lg:font-semibold text-sm lg:text-xl py-1">
                         {t("licenseNumber")}
                       </td>
                       <td className="border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
                         <input
-                          type="text"
+                          type="number"
                           name="licenseNumber"
                           value={userData?.licenseNumber}
                           onChange={handleInputChange}
                           placeholder="License Number"
-                          className="w-full placeholder:text-black bg-transparent outline-none"
+                          className="w-full p-1.5 placeholder:text-black bg-transparent outline-none"
                         />
                       </td>
                     </tr>
                     <tr className="border-b-[1px] lg:border-b-2 border-[#000000]">
-                      <td className="px-3 font-thin lg:font-semibold text-lg lg:text-xl py-1">
+                      <td className="px-3 font-thin lg:font-semibold text-sm lg:text-xl py-1">
                         {t("dateOfBirth")}
                       </td>
                       <td className="border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
                         <div className="flex justify-between items-center">
-                          <input
-                            type="date"
-                            name="dateOfBirth"
-                            value={formattedDate}
-                            onChange={handleInputChange}
-                            className="w-full bg-transparent outline-none"
-                          />
+                           
+
+                        <DatePicker
+      selected={selectedDate}
+      onChange={(date) => setSelectedDate(date)}
+      dateFormat="yyyy-MM-dd"
+      className="w-full outline-none p-1.5"
+      maxDate={minAgeDate} // Restrict selection to 18+ only
+      showYearDropdown
+      scrollableYearDropdown
+      yearDropdownItemNumber={100} // Show a broader range of years
+      customInput={<CustomInput />}
+    />
                           {/* <img src={calendar} alt="calendar" className="w-6" /> */}
                         </div>
                       </td>
                     </tr>
                     <tr className=" border-[#000000]">
-                      <td className="px-3 font-thin lg:font-semibold text-lg lg:text-xl py-1">{t("phone")}</td>
+                      <td className="px-3 font-thin lg:font-semibold text-sm lg:text-xl py-1">{t("phone")}</td>
                       <td className="border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
                         <input
-                          type="text"
+                          type="tel"
                           name="phone"
                           value={userData?.phone}
-                          onChange={handleInputChange}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^[+\d]*$/.test(value)) {
+                              handleInputChange(e);
+                            }
+                          }}
                           placeholder="Phone Number"
-                          className="w-full placeholder:text-black bg-transparent outline-none"
+                          className="w-full p-1.5 placeholder:text-black bg-transparent outline-none"
                         />
                       </td>
                     </tr>
@@ -379,7 +422,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                    {t("loginInformation")}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 text-sm font-medium mb-10 pl-2 pr-2">
-                    <div className="flex justify-between items-center">
+                    <div className="lg:flex justify-between items-center">
                       <label
                         htmlFor="email"
                         className="text-lg font-thin lg:font-semibold w-1/3"
@@ -393,10 +436,10 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         value={userData?.email}
                         onChange={handleInputChange}
                         // placeholder="Enter your email"
-                        className="w-[38%] lg:w-2/3 outline-none ml-[43px] bg-transparent text-[#000000] placeholder-gray-500 border-[1px] lg:border-2 border-black"
+                        className="w-full lg:w-2/3 outline-none p-1.5 lg:ml-[43px] bg-transparent text-[#000000] placeholder-gray-500 border-[1px] lg:border-2 border-black"
                       />
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="lg:flex justify-between items-center">
                       <label
                         htmlFor="password"
                         className="text-lg font-thin lg:font-semibold w-1/3"
@@ -410,13 +453,13 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         value={userData?.password}
                         onChange={handleInputChange}
                         // placeholder="Enter your password"
-                        className="w-[38%] lg:w-2/3 outline-none ml-[43px] bg-transparent text-[#000000] placeholder-gray-500 border-[1px] lg:border-2 border-black"
+                        className="w-full lg:w-2/3 p-1.5 outline-none lg:ml-[43px] bg-transparent text-[#000000] placeholder-gray-500 border-[1px] lg:border-2 border-black"
                       />
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center">
                       <label
                         htmlFor="confirmPassword"
-                        className="text-lg font-thin lg:font-semibold w-auto flex-shrink-0"
+                        className="text-lg lg:w-[39%] font-thin lg:font-semibold w-auto flex-shrink-0"
                       > 
                         {t("confirmPassword")}
                       </label>
@@ -425,7 +468,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         id="confirmPassword"
                         name="confirmPassword"
                         onChange={handleInputChange}
-                        className="w-full outline-none bg-transparent text-[#000000] placeholder-gray-500 border-[1px] lg:border-2 border-black"
+                        className="w-full  outline-none p-1.5 bg-transparent text-[#000000] placeholder-gray-500 border-[1px] lg:border-2 border-black"
                       />
                     </div>
                   </div>
@@ -638,13 +681,13 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                       {t("vehicleType")}
                       </label>
                       <select
-  className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
+  className="w-[60%] lg:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="vehicleType"
   name="vehicleType"
   value={userData?.vehicleType || ""} // Ensure a fallback value is provided
   onChange={(e) => setUserData((prev) => ({ ...prev, vehicleType: e.target.value }))} // Update state
 >
-  <option value="">Select Vehicle Type</option> {/* Optional placeholder */}
+  <option value="">Vehicle Type</option> {/* Optional placeholder */}
   <option value="Car">Car</option>
   <option value="Motorcycle">Motorcycle</option>
   <option value="Scooter">Scooter</option>
@@ -664,7 +707,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="Combine Harvester">Combine Harvester</option>
   <option value="Taxi">Taxi</option>
   <option value="Garbage Truck">Garbage Truck</option>
-  <option value="RV (Recreational Vehicle)">RV (Recreational Vehicle)</option>
+  <option value="RV">RV</option>
   <option value="Trailer">Trailer</option>
 </select>
 
@@ -678,22 +721,33 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         type="text"
                         name="area"
                         value={userData?.area}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
                         className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
                       />
                     </div>
                     <div className="flex justify-between items-center ">
-                      <label className="block text-base  sm:text-lg font-medium  ">
+                      <label className="block w-[40%] lg:w-[30%] font-medium text-base  sm:text-lg ">
                       {t("city")}
                       </label>
                       <input
                         type="text"
                         name="city"
                         value={userData?.city}
-                        onChange={handleInputChange}
-                        className="w-[60%]  sm:w-[70%]  border-[1px] lg:border-2 p-1.5  bg-transparent  outline-none  border-[#000000]"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
+                        className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
                       />
                     </div>
+                     
                     <div className="flex justify-between items-center ">
                       <label className="block text-base  sm:text-lg font-medium">
                       {t("country")}
@@ -710,11 +764,13 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="Spain">Spain</option>
   <option value="France">France</option>
   <option value="Germany">Germany</option>
+  <option value="Egypt">Egypt</option>
+  
   </select>
                     </div>
                   </div>
                   <div className="mt-6 text-center border-t  border-[#000000]  ">
-                    <button className="bg-orange-500 text-white py-2 px-16  shadow-md hover:bg-orange-600 mt-3 mb-2 border border-[#000000] text-lg "
+                    <button className="bg-orange-500 text-white py-2 px-16  shadow-md hover:bg-orange-600 mt-3 mb-3 border border-[#000000] text-lg "
                     onClick={handleSubmit}>
                       {t("save")}
                     </button>

@@ -9,7 +9,8 @@ function Contact() {
       <Container
         maxWidth="sm"
         sx={{
-          mt: 4,
+          mt: { xs: 0, sm: 0, md: 2 },
+          mb: { xs: 0, sm: 0, md: 4 },
           p: 3,
           backgroundColor: "#f5f5f5",
           borderRadius: 2,
@@ -85,6 +86,7 @@ function Contact() {
             sx={{
               fontWeight: "bold",
               py: 1.5,
+              backgroundColor: "#f97316",
             }}
           >
             Submit

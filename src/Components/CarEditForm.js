@@ -6,6 +6,7 @@ import { GoHome } from "react-icons/go";
 import { TfiEmail } from "react-icons/tfi";
 import { GoBell } from "react-icons/go";
 import { TfiWallet } from "react-icons/tfi";
+import { FaCalendarAlt } from "react-icons/fa";
 
 import cloudcomputing from "../assets/cloudcomputing.png";
 import { CiStar } from "react-icons/ci";
@@ -20,6 +21,10 @@ import IMAGE_API from '../Components/services/ImgBase';
 import UserProfile from '../Components/UserProfile';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { subYears } from "date-fns"; // Import date-fns function
 
 const CarEditForm = () => {
   const { t, i18n } = useTranslation(); // Hook for translation
@@ -36,6 +41,7 @@ const CarEditForm = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const [userData, setUserData] = useState({ 
     firstName: "",
@@ -71,8 +77,10 @@ const CarEditForm = () => {
         
         setUserData(response.data); // Adjust based on how your `API` service formats responses
 
+        if(response.data.profileImage){
+          setPreviewImage(`${IMAGE_API}${response.data.profileImage}`);
+        }
         
-        setPreviewImage(`${IMAGE_API}${response.data.profileImage}`);
         //setTempFirstName(response.data.firstName);
 
       } catch (error) {
@@ -95,9 +103,19 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const CustomInput = ({ value, onClick }) => (
+  <button 
+    onClick={onClick} 
+    className="w-full flex items-center justify-between px-3 py-2  rounded-md outline-none bg-white"
+  >
+    {value || "Select Date"}
+    <FaCalendarAlt className="text-gray-500" />
+  </button>
+);
+
 
 // Use this formatted date for display purposes
-const formattedDate = formatDate(userData?.dateOfBirth);
+//const formattedDate = formatDate(userData?.dateOfBirth);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -142,8 +160,11 @@ const formattedDate = formatDate(userData?.dateOfBirth);
     try {
 
       const userId = localStorage.getItem('userId'); 
+
+      // Update userData with the formatted date
+      const updatedUserData = { ...userData, dateOfBirth: selectedDate };
       // Use the `put` method from your API service
-      const response = await API.put(`/users/${userId}`, userData); // Ensure the endpoint matches your API
+      const response = await API.put(`/users/${userId}`, updatedUserData); // Ensure the endpoint matches your API
       
       if (response.status === 200) { // Assuming a 200 status code means success 
         setModalMessage("Profile updated successfully!");
@@ -230,8 +251,17 @@ const formattedDate = formatDate(userData?.dateOfBirth);
     }
   };
   
-
+  const minAgeDate = subYears(new Date(), 18);
   const closeModal = () => setShowModal(false);
+
+   // Fetch dateOfBirth from database (example from localStorage or API)
+    useEffect(() => {
+      const dateOfBirthFromDB = userData?.dateOfBirth; // Or fetch from API
+      if (dateOfBirthFromDB) {
+        // Convert to Date object if necessary
+        setSelectedDate(new Date(dateOfBirthFromDB));
+      }
+    }, [userData?.dateOfBirth]);
 
   return (
     <>
@@ -252,12 +282,12 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                 <table className="w-full border border-[#000000]">
                   <tbody>
                     <tr className="border-b border-[#000000]">
-                      <td className="px-4 py-2 font-thin lg:font-semibold text-lg  text-[#000000]">
+                      <td className="px-4 py-2 w-1/2 font-thin lg:font-semibold text-lg  text-[#000000]">
                          {t("idNumber")}
                       </td>
                       <td className="border-l-2 px-4 border-[#000000]">
                         <input
-                          type="text"
+                          type="number"
                           name="idNumber"
                           value={userData?.idNumber}
                           onChange={handleInputChange}
@@ -271,12 +301,18 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                          {t("dateOfBirth")}
                       </td>
                       <td className="border-l-2 px-4 border-[#000000]">
-                        <input
-                          type="date"
-                          value={formattedDate}
-                          onChange={handleInputChange}
-                          className="w-full bg-transparent outline-none"
-                        />
+                        
+                           <DatePicker
+                              selected={selectedDate}
+                              onChange={(date) => setSelectedDate(date)}
+                              dateFormat="yyyy-MM-dd"
+                              className="w-full outline-none"
+                              maxDate={minAgeDate} // Restrict selection to 18+ only
+                              showYearDropdown
+                              scrollableYearDropdown
+                              yearDropdownItemNumber={100} // Show a broader range of years
+                              customInput={<CustomInput />}
+                            />
                       </td>
                     </tr>
                     <tr className="border-b border-[#000000]">
@@ -285,10 +321,15 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                       </td>
                       <td className=" border-l-2 px-4 border-[#000000]">
                         <input
-                          type="text"
+                          type="tel"
                           name="phone"
                           value={userData?.phone}
-                          onChange={handleInputChange}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^[+\d]*$/.test(value)) {
+                              handleInputChange(e);
+                            }
+                          }}
                           placeholder="Enter Phone Number"
                           className="w-full placeholder:text-black bg-transparent outline-none"
                         />
@@ -303,7 +344,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                     {t("loginInformation")}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 text-sm font-medium mb-10 pl-2 mr-2">
-                    <div className="flex justify-between items-center">
+                    <div className="lg:flex justify-between items-center">
                       <label
                         htmlFor="email"
                         className="text-lg font-thin lg:font-semibold w-1/3"
@@ -317,10 +358,10 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         value={userData?.email}
                         onChange={handleInputChange}
                         // placeholder="Enter your email"
-                        className="w-[37%] lg:w-2/3 outline-none ml-[40px] border-[1px] lg:border-2 border-black bg-transparent text-[#000000] placeholder-gray-500"
+                        className="w-full lg:w-2/3 p-2 lg:p-1.5 outline-none lg:ml-[40px] border-[1px] lg:border-2 border-black bg-transparent text-[#000000] placeholder-gray-500"
                       />
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="lg:flex justify-between items-center">
                       <label
                         htmlFor="password"
                         className="text-lg font-thin lg:font-semibold w-1/3"
@@ -334,13 +375,13 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         value={userData?.password}
                         onChange={handleInputChange}
                         // placeholder="Enter your password"
-                        className="w-[37%] lg:w-2/3 outline-none ml-[40px] border-[1px] lg:border-2 border-black bg-transparent text-[#000000] placeholder-gray-500"
+                        className="w-full lg:w-2/3 p-2 lg:p-1.5 outline-none input lg:ml-[40px] border-[1px] lg:border-2 border-black bg-transparent text-[#000000] placeholder-gray-500"
                       />
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center">
                       <label
                         htmlFor="confirmPassword"
-                        className="text-lg font-thin lg:font-semibold w-auto flex-shrink-0"
+                        className="text-lg lg:w-[38%] p-2 lg:p-1.5 font-thin lg:font-semibold w-auto flex-shrink-0"
                       >
                         {t("confirmPassword")}
                       </label>
@@ -350,7 +391,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         name="confirmPassword"
                         value={userData?.confirmPassword}
                         onChange={handleInputChange}
-                        className="w-full outline-none  border-[1px] lg:border-2 border-black bg-transparent text-[#000000] placeholder-gray-500"
+                        className="w-full outline-none p-2 lg:p-1 border-[1px] lg:border-2 border-black bg-transparent text-[#000000] placeholder-gray-500"
                       />
                     </div>
                   </div>
@@ -362,7 +403,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                   {t("vehicleDetails")}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 font-medium pl-4 pr-3">
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center gap-4">
                       <p className="w-[53%] lg:w-1/3 flex-shrink-0 ">{t("makeModelYear")}</p>
                       <input
                         type="text"
@@ -370,14 +411,14 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         name="modelYear"
                         value={userData?.modelYear}
                         onChange={handleInputChange}
-                        className="w-full bg-transparent border-[1px] lg:border-2 border-black outline-none placeholder-gray-400"
+                        className="w-full lg:w-[60%] bg-transparent p-1.5 border-[1px] lg:border-2 border-black outline-none placeholder-gray-400"
                       />
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center gap-4">
                       <p className="w-[79%] lg:w-1/3">{t("vehicleType")}</p>
                       <select
-  className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
+  className="lg:w-[60%] sm:w-[70%] w-full border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="vehicleType"
   name="vehicleType"
   value={userData?.vehicleType || ""} // Ensure a fallback value is provided
@@ -407,10 +448,10 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="Trailer">Trailer</option>
 </select>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="w-[50%] lg:w-1/3">{t("transmission")}</p>
+                    <div className="lg:flex items-center gap-4">
+                      <p className="w-[77%] lg:w-1/3">{t("transmission")}</p>
                       <select
-  className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
+  className="lg:w-[60%] w-full sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="transmission"
   name="transmission"
   value={userData?.transmission || ""} // Ensure a fallback value is provided
@@ -421,10 +462,10 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="automatic">Automatic</option>
   </select>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center gap-4">
                       <p className="w-[79%] lg:w-1/3">{t("airCondition")}</p>
                       <select
-  className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
+  className="lg:w-[60%] w-full sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="airCondition"
   name="airCondition"
   value={userData?.airCondition || ""} // Ensure a fallback value is provided
@@ -435,10 +476,10 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="no">No</option>
   </select>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center gap-4">
                       <p className="w-[79%] lg:w-1/3">{t("insurance")}</p> 
                       <select
-  className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
+  className="lg:w-[60%] w-full sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="insurance"
   name="insurance"
   value={userData?.insurance || ""} // Ensure a fallback value is provided
@@ -450,11 +491,11 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="obilgatory">obilgatory</option>
   </select>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center gap-4">
                       <p className="w-[79%] lg:w-1/3"> {t("fuel")}</p>
                        
                       <select
-  className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
+  className="lg:w-[60%] w-full sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="fuel"
   name="fuel"
   value={userData?.fuel || ""} // Ensure a fallback value is provided
@@ -472,15 +513,20 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="Hydrogen">Hydrogen</option>
   </select>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="lg:flex items-center gap-4">
                       <p className="w-[79%] lg:w-1/3">{t("color")}</p>
                       <input
                         type="text"
                         // placeholder="Enter color"
                         name="color"
                         value={userData?.color}
-                        onChange={handleInputChange}
-                        className="w-full bg-transparent outline-none placeholder-gray-400 border-[1px] lg:border-2 border-black ml-[62px]"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
+                        className="w-full lg:w-[60%] bg-transparent outline-none placeholder-gray-400 border-[1px] lg:border-2 border-black  mb-2 p-1.5"
                       />
                     </div>
                   </div>
@@ -495,7 +541,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                   </h2>
                   <div className="flex justify-evenly items-center text-black text-xs mb-3">
                     {/* ID Upload Button */}
-                    <div className="relative">
+                    <div className="relative text-center justify-center items-center">
                       <input
                         type="file"
                         accept="image/*"
@@ -515,7 +561,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                     </div>
 
                     {/* Vehicle License Upload Button */}
-                    <div className="relative">
+                    <div className="relative text-center justify-center items-center">
                       <input
                         type="file"
                         accept="image/*"
@@ -535,7 +581,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                     </div>
 
                     {/* Car Owner Upload Button */}
-                    <div className="relative">
+                    <div className="relative text-center justify-center items-center">
                       <input
                         type="file"
                         accept="image/*"
@@ -562,12 +608,15 @@ const formattedDate = formatDate(userData?.dateOfBirth);
             <div className="flex flex-col justify-end  lg:relative   ">
               <div>
                 <div className="">
-                  <div className=" bg-white border border-black rounded-lg   pb-6 lg:w-[34.5rem] lg:h-[32.4rem] flex justify-center items-center   lg:absolute lg:top-[0rem] lg:right-0 ">
-                    <img
+                  <div className=" bg-white border border-black rounded-lg   pb-6 lg:w-[34.5rem] h-[20rem] lg:h-[32.4rem] flex justify-center items-center   lg:absolute lg:top-[0rem] lg:right-0 ">
+                    {previewImage && (
+                      <img
                       src={previewImage}
                       alt=""
-                      className="  object-cover  w-[26rem]  h-[26rem] "
+                      className="  object-cover mt-2 lg:mt-0  w-[26rem] h-[18rem]  lg:h-[26rem] "
                     />
+                     ) }
+                    
                   </div>
                   <span className="text-3xl bg-white lg:bg-transparent  flex justify-end lg:inline-block   ">
                     <img
@@ -614,7 +663,12 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         type="text"
                         name="vehicleplate"
                         value={userData?.vehicleplate}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[a-zA-Z0-9]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
                         className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5 bg-transparent  outline-none border-[#000000]"
                       />
                     </div>
@@ -626,19 +680,29 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         type="text"
                         name="area"
                         value={userData?.area}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
                         className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
                       />
                     </div>
                     <div className="flex justify-between items-center ">
-                      <label className="block text-base  sm:text-lg font-medium  ">
+                    <label className="block w-[40%] lg:w-[30%] font-medium text-base  sm:text-lg ">
                       {t("city")}
                       </label>
                       <input
                         type="text"
                         name="city"
                         value={userData?.city}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
                         className="w-[60%]  sm:w-[70%]  border-[1px] lg:border-2 p-1.5  bg-transparent  outline-none  border-[#000000]"
                       />
                     </div>
@@ -658,11 +722,12 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   <option value="Spain">Spain</option>
   <option value="France">France</option>
   <option value="Germany">Germany</option>
+  <option value="Egypt">Egypt</option>
   </select>
                     </div>
                   </div>
                   <div className="mt-6 text-center border-t  border-[#000000]  ">
-                    <button className="bg-orange-500 text-black py-2 w-full lg:w-auto  px-16  shadow-md hover:bg-orange-600 mt-3 lg:mb-2 border border-[#000000] text-lg "
+                    <button className="bg-orange-500 text-black py-2  lg:w-auto  px-16  shadow-md hover:bg-orange-600 mt-3 mb-3 lg:mb-2 border border-[#000000] text-lg "
                     onClick={handleSubmit}>
                       {t("save")}
                     </button>

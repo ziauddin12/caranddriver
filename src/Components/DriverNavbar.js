@@ -14,6 +14,7 @@ function DriverNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+   const [isLogin, setIsLogin] = useState(false);
   const { t, i18n } = useTranslation(); // Hook for translation
    // State to store selected language and flag
    const [selectedLanguage, setSelectedLanguage] = useState({
@@ -64,6 +65,7 @@ function DriverNavbar() {
 
   // Load language preference on component mount
 useEffect(() => {
+  setIsLogin(!!userId); // Convert to boolean (true if userId exists)
   const savedLang = Cookies.get("language");
   if (savedLang) {
     i18n.changeLanguage(savedLang);
@@ -175,6 +177,24 @@ const userImage = `${IMAGE_API}${userImageSub}`;
                {t("driver")}
               </NavLink>
             </li>
+
+            {isLogin && (
+   <li className="lg:hidden">
+    <NavLink
+                to={`/profile/${userId}`}
+                className={({ isActive }) => (isActive ? "active-link" : "")}
+              >
+                {t("profile")}
+                </NavLink>  </li>
+)}
+
+            {isLogin && (
+  <li className="cursor-pointer text-white" onClick={handleLogout}>
+  {i18n.t("logout")}
+</li>
+)}
+
+
           
            
               {/* Language Dropdown */}
@@ -248,7 +268,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
             {/* <FontAwesomeIcon icon={faUser} className="user-icon" /> */}
             {/* Right side - Profile Dropdown */}
           <div className="navbar-profile">
-            <div className="profile-dropdown-trigger" onClick={toggleProfileDropdown}>
+            <div className="profile-dropdown-trigger flex" onClick={toggleProfileDropdown}>
             <img
                 src={userImage}// Replace with the actual user profile image URL
                 alt="Profile"

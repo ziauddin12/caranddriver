@@ -1,28 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react"; 
 import Navbar from "./Navbar";
 import registerImg from "./Images/man-with-glasses-shirt-that-says-happy-money_1322386-32315-scaled.jpg";
 import { Box } from "@mui/material";
-import "../Components/Register.css";
-import API from '../Components/services/api';
-import { useTranslation } from "react-i18next";
+import "../Components/Register.css"; 
+
+import { useTranslation, Trans  } from "react-i18next";
 import Cookies from "js-cookie";
 
-function Register({ prevStep }) {
+function Register({ nextStep }) {
 
-  const savedStep1Data = JSON.parse(localStorage.getItem("registerStep1")) || {};
+  const [formData, setFormData] = useState({ 
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    ...savedStep1Data,
-  });
   const [isChecked, setIsChecked] = useState(false);
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
-
-  const navigate = useNavigate(); // Get navigate function
+  
+ 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,26 +53,18 @@ function Register({ prevStep }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      try {
-        const response = await API.post("/users", formData); // Backend API call
-        setSuccessMessage(response.data.message);
-        console.log("User registered successfully:", response.data);
-
-        navigate('/login');
-
-        // Clear all data
-        localStorage.removeItem("registerStep1");
-        setFormData({ email: "", password: "", confirmPassword: "" });
-      } catch (error) {
-        setErrors({
-          apiError: error.response?.data.message || "Server error occurred.",
-        });
+  const handleSubmit = (e) => {
+      e.preventDefault();
+      if (validateForm()) {
+        console.log("Form submitted:", formData);
+        // Clear form
+       // setFormData({ firstName: "", lastName: "", phone: "" });
+       // setErrors({});
+       // Save data to localStorage for Step 2
+       localStorage.setItem("registerStep1", JSON.stringify(formData));
+       nextStep(); // Move to the next step
       }
-    }
-  };
+    };
 
   const { t, i18n } = useTranslation(); // Hook for translation
 
@@ -91,7 +80,7 @@ function Register({ prevStep }) {
 
   return (
     <>
-      <div style={{ backgroundImage: "#F4F4F4", height: "auto" }}>
+      <div style={{ backgroundColor: "#F4F4F4", height: "auto" }}>
         <Navbar />
         {/* <div> 
              <img src={registerImg} alt="Custom" />
@@ -107,12 +96,12 @@ function Register({ prevStep }) {
           alt="The house from the offer."
           src={registerImg}
         />
-        <div className="registerContainer">
+        <div className="registerContainer p-3 rounded-md lg:absolute  lg:top-[30%] lg:bg-[#ffffffd4]  p-7 right-0 left-0">
           <form onSubmit={handleSubmit}>
-            <div className="fields">
-              <label htmlFor="email">{t("email")}:</label>
+            <div className=" flex flex-wrap items-center">
+              <label htmlFor="email" className="w-[250px]">{t("email")}</label>
               <input
-                className="label-gap1"
+                className="w-full p-2 border border-gray-300 rounded"
                 type="email"
                 id="email"
                 name="email"
@@ -124,10 +113,10 @@ function Register({ prevStep }) {
               )}
             </div>
 
-            <div className="fields">
-              <label htmlFor="password">{t("password")}:</label>
+            <div className="flex flex-wrap items-center mt-5">
+              <label htmlFor="password" className="w-[250px]">{t("password")}</label>
               <input
-                className="label-gap2"
+                className="w-full p-2 border border-gray-300 rounded"
                 type="password"
                 id="password"
                 name="password"
@@ -135,14 +124,14 @@ function Register({ prevStep }) {
                 onChange={handleChange}
               />
               {errors.password && (
-                <span style={{ color: "red" }}>{errors.password}</span>
+                <p style={{ color: "red" }}>{errors.password}</p>
               )}
             </div>
 
-            <div className="fields">
-              <label htmlFor="confirmPassword">{t("confirmPassword")}:</label>
+            <div className="flex flex-wrap items-center mt-5 mb-5">
+              <label htmlFor="confirmPassword" className="lg:w-[250px]">{t("confirmPassword")}</label>
               <input
-                className="label-gap3"
+                className="w-full p-2 border border-gray-300 rounded"
                 type="password"
                 id="confirmPassword"
                 name="confirmPassword"
@@ -150,7 +139,7 @@ function Register({ prevStep }) {
                 onChange={handleChange}
               />
               {errors.confirmPassword && (
-                <span style={{ color: "red" }}>{errors.confirmPassword}</span>
+                <p style={{ color: "red" }}>{errors.confirmPassword}</p>
               )}
             </div>
             <div>
@@ -160,11 +149,14 @@ function Register({ prevStep }) {
                 checked={isChecked}
                 onChange={(e) => setIsChecked(e.target.checked)}
               />
-              <label>
-              {t("agreeToTerms")}
-              </label>
+             <label dir="auto">
+  <Trans i18nKey="agreeToTerms" components={{ 
+    1: <a href="/terms" target="_blank" />, 
+    2: <a href="/privacy-policy" target="_blank" /> 
+  }} />
+</label>
               {errors.checkbox && (
-                <span style={{ color: "red" }}>{errors.checkbox}</span>
+                <p style={{ color: "red" }}>{errors.checkbox}</p>
               )}
             </div>
              
@@ -172,12 +164,7 @@ function Register({ prevStep }) {
             {t("register")}
             </button>
           </form>
-          {errors.apiError && (
-              <p style={{ color: "red", fontWeight: "bold" }}>
-                {errors.apiError}
-              </p>
-            )}
-          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+         
         </div>
       </div>
     </>

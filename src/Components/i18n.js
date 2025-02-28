@@ -60,10 +60,17 @@ const resources = {
       iAmA: "I am a",
       register: "Register",
       resetpassword:"Reset Password",
-      agreeToTerms: "I agree to terms and conditions set forth by DriveWill and its privacy policy.",
+      agreeToTerms: "I agree to <1>terms and conditions</1> set forth by DriveWill and its <2>privacy policy</2>.",
       forgotPassword: "Forgot Password?",
       sendResetLink: "Send Reset Link",
       forgotPasswordInstructions: "Enter your email and we'll send you a link to reset your password.",
+      stopSearching: "Stop Searching",
+    startFinding: "Start Finding",
+    driveWillDescription: "DriveWill connects skilled drivers with car owners, offering a fast, convenient, and secure experience for everyone. No more waiting. No more hassle.",
+    findCar: "Find a Car",
+    findWheelman: "Find a Wheelman",
+    VerifyOTP:"Verify  OTP",
+    emailVerificationCode: "We sent you an email verification code",
     },
   },
   es: {
@@ -126,7 +133,14 @@ const resources = {
       sendResetLink: "Enviar enlace de restablecimiento",
       resetpassword:"Restablecer contraseña",
       forgotPasswordInstructions: "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.",
-      agreeToTerms: "Acepto los términos y condiciones establecidos por DriveWill y su política de privacidad."
+      agreeToTerms: "Acepto los <1>términos y condiciones</1> establecidos por DriveWill y su <2>política de privacidad</2>.",
+      stopSearching: "Deja de buscar",
+      startFinding: "Empieza a encontrar",
+      driveWillDescription: "DriveWill conecta conductores expertos con propietarios de automóviles, ofreciendo una experiencia rápida, conveniente y segura para todos. No más esperas. No más problemas.",
+      findCar: "Encontrar un coche",
+      findWheelman: "Encontrar un conductor",
+      VerifyOTP:"Verificar OTP",
+      emailVerificationCode: "Te enviamos un código de verificación por correo electrónico",
 
 
     },
@@ -190,9 +204,16 @@ const resources = {
       forgotPassword: "Mot de passe oublié ?",
       sendResetLink: "Envoyer le lien de réinitialisation",
       resetpassword:"Réinitialiser le mot de passe",
+      stopSearching: "Arrêtez de chercher",
+    startFinding: "Commencez à trouver",
+    driveWillDescription: "DriveWill connecte des chauffeurs qualifiés avec des propriétaires de voitures, offrant une expérience rapide, pratique et sécurisée pour tous. Plus d'attente. Plus de tracas.",
+    findCar: "Trouver une voiture",
+    findWheelman: "Trouver un chauffeur",
       forgotPasswordInstructions: "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
-      agreeToTerms: "J'accepte les termes et conditions établis par DriveWill et sa politique de confidentialité."
-
+      agreeToTerms: "J'accepte les <1>termes et conditions</1> établis par DriveWill et sa <2>politique de confidentialité</2>.",
+      VerifyOTP:"Vérifier OTP",
+      emailVerificationCode: "Nous vous avons envoyé un code de vérification par e-mail",
+      
     },
   },
   de: {
@@ -254,9 +275,15 @@ const resources = {
       forgotPassword: "Passwort vergessen?",
       sendResetLink: "Link zum Zurücksetzen senden",
       resetpassword:"Passwort zurücksetzen",
+      stopSearching: "Hör auf zu suchen",
+    startFinding: "Fange an zu finden",
+    driveWillDescription: "DriveWill verbindet erfahrene Fahrer mit Autobesitzern und bietet eine schnelle, bequeme und sichere Erfahrung für alle. Kein Warten mehr. Kein Ärger mehr.",
+    findCar: "Ein Auto finden",
+    findWheelman: "Einen Fahrer finden",
+    VerifyOTP:"OTP verifizieren",
+    emailVerificationCode: "Wir haben Ihnen einen E-Mail-Bestätigungscode gesendet",
       forgotPasswordInstructions: "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
-      agreeToTerms: "Ich stimme den von DriveWill festgelegten Bedingungen und der Datenschutzrichtlinie zu."
-
+      agreeToTerms: "Ich stimme den von DriveWill festgelegten <1>Bedingungen</1> und der <2>Datenschutzrichtlinie</2> zu."
     },
   },
   eg: {
@@ -317,9 +344,16 @@ const resources = {
       register: "تسجيل",
       forgotPassword: "هل نسيت كلمة المرور؟",
       resetpassword:"إعادة تعيين كلمة المرور",
-      agreeToTerms: "أوافق على الشروط والأحكام التي وضعتها DriveWill وسياسة الخصوصية الخاصة بها.",
+      stopSearching: "توقف عن البحث",
+    startFinding: "ابدأ في العثور",
+    driveWillDescription: "تقوم DriveWill بربط السائقين المهرة بأصحاب السيارات، مما يوفر تجربة سريعة ومريحة وآمنة للجميع. لا مزيد من الانتظار. لا مزيد من المتاعب.",
+    findCar: "ابحث عن سيارة",
+    findWheelman: "ابحث عن سائق",
+    VerifyOTP:"التحقق من OTP",
+      agreeToTerms: "أوافق على <1>الشروط والأحكام</1> التي وضعتها DriveWill و<2>سياسة الخصوصية</2> الخاصة بها.",
       forgotPasswordInstructions: "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور الخاصة بك.",
       sendResetLink: "إرسال رابط إعادة التعيين",
+      emailVerificationCode: "أرسلنا لك رمز التحقق عبر البريد الإلكتروني",
     },
   },
 };

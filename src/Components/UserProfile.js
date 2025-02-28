@@ -51,14 +51,24 @@ const UserProfile = ({ userData, setUserData, PublicView = true }) => {
             <input
               type="text"
               value={tempFirstName} // Bind to tempFirstName
-              onChange={(e) => setTempFirstName(e.target.value)} // Update tempFirstName
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[A-Za-z]*$/.test(value)) {
+                  setTempFirstName(e.target.value);
+                }
+              }}
               placeholder="First Name"
               className="border border-gray-300 rounded-md p-2 w-full"
             />
             <input
               type="text"
               value={tempLastName} // Bind to tempLastName
-              onChange={(e) => setTempLastName(e.target.value)} // Update tempLastName
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[A-Za-z]*$/.test(value)) {
+                  setTempLastName(e.target.value);
+                }
+              }}
               placeholder="Last Name"
               className="border border-gray-300 rounded-md p-2 w-full"
             />

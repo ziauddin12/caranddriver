@@ -7,8 +7,8 @@ function Signup() {
 
   return (
     <>
-      {step === 1 && <Register2 nextStep={() => setStep(2)} />}
-      {step === 2 && <Register prevStep={() => setStep(1)} />}
+      {step === 1 && <Register nextStep={() => setStep(2)} />}
+      {step === 2 && <Register2 prevStep={() => setStep(1)} />}
     </>
   );
 }

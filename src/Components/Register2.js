@@ -3,19 +3,29 @@ import Navbar from "./Navbar";
 import registerImg from "./Images/man-with-glasses-shirt-that-says-happy-money_1322386-32315-scaled.jpg";
 import { Box } from "@mui/material";
 import "../Components/Register.css";
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
+import API from '../Components/services/api';
 
 import Cookies from "js-cookie";
 
-function Register2({ nextStep }) {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    userType: "driver",
-  });
+function Register2({ prevStep }) {
+
+  const savedStep1Data = JSON.parse(localStorage.getItem("registerStep1")) || {};
+
+   const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        userType: "driver",
+          ...savedStep1Data,
+       });
+
   //const [isChecked, setIsChecked] = useState(false);
   const [errors, setErrors] = useState({});
+ 
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const navigate = useNavigate(); // Get navigate function
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,8 +47,8 @@ function Register2({ nextStep }) {
 
     if (!formData.phone) {
       newErrors.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      newErrors.phone = "Enter a valid phone number (10 digits)";
+    } else if (!/^\+?\d{1,14}$/.test(formData.phone)) {
+      newErrors.phone = "Enter a valid phone number";
     }
 
     /*if (!isChecked) {
@@ -49,18 +59,28 @@ function Register2({ nextStep }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted:", formData);
-      // Clear form
-     // setFormData({ firstName: "", lastName: "", phone: "" });
-     // setErrors({});
-     // Save data to localStorage for Step 2
-     localStorage.setItem("registerStep1", JSON.stringify(formData));
-     nextStep(); // Move to the next step
+      try {
+        const response = await API.post("/users", formData); // Backend API call
+        setSuccessMessage(response.data.message);
+        console.log("User registered successfully:", response.data);
+
+        navigate('/verify-opt');
+
+        // Clear all data
+        localStorage.removeItem("registerStep1");
+        setFormData({ firstName: "", lastName: "", userType: "driver" });
+      } catch (error) {
+        setErrors({
+          apiError: error.response?.data.message || "Server error occurred.",
+        });
+      }
     }
   };
+
+  
 
   // Load language preference on component mount
         useEffect(() => {
@@ -85,20 +105,25 @@ function Register2({ nextStep }) {
           alt="The house from the offer."
           src={registerImg}
         />
-        <div className="registerContainer">
+        <div className="registerContainer p-3 rounded-md lg:absolute  lg:top-[30%] lg:bg-[#ffffffd4]  p-7 right-0 left-0">
           <form onSubmit={handleSubmit}>
             <div className="fields">
               <label htmlFor="firstName">{t("firstName")}:</label>
               <input
-                className="label-gap4"
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
+  className="label-gap4"
+  type="text"
+  id="firstName"
+  name="firstName"
+  value={formData.firstName}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[A-Za-z]*$/.test(value)) {
+      handleChange(e);
+    }
+  }}
+/>
               {errors.firstName && (
-                <span style={{ color: "red" }}>{errors.firstName}</span>
+                <p style={{ color: "red" }}>{errors.firstName}</p>
               )}
             </div>
 
@@ -110,10 +135,15 @@ function Register2({ nextStep }) {
                 id="lastName"
                 name="lastName"
                 value={formData.lastName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^[A-Za-z]*$/.test(value)) {
+                    handleChange(e);
+                  }
+                }}
               />
               {errors.lastName && (
-                <span style={{ color: "red" }}>{errors.lastName}</span>
+                <p style={{ color: "red" }}>{errors.lastName}</p>
               )}
             </div>
 
@@ -128,7 +158,7 @@ function Register2({ nextStep }) {
                 onChange={handleChange}
               />
               {errors.phone && (
-                <span style={{ color: "red" }}>{errors.phone}</span>
+                <p style={{ color: "red" }}>{errors.phone}</p>
               )}
             </div>
 
@@ -150,6 +180,13 @@ function Register2({ nextStep }) {
             {t("register")}
             </button>
           </form>
+
+          {errors.apiError && (
+              <p style={{ color: "red", fontWeight: "bold" }}>
+                {errors.apiError}
+              </p>
+            )}
+          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
         </div>
       </div>
     </>

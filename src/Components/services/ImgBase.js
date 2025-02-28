@@ -1,3 +1,3 @@
-const IMAGE_API = "http://localhost:5000"
+const IMAGE_API = "https://drivewill.com"
 
 export default IMAGE_API;

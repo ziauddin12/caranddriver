@@ -7,6 +7,7 @@
   /* text-align: center; */
   /* height: 100vh; */
   /* border: 2px solid red; */
+  
   background: url("../assets/black-car-is-driving-down-street-with-reflection-license-plate-it_1049207-23637-scaled-2.jpg")
     no-repeat center center/cover;
 }
@@ -73,6 +74,18 @@ h2 {
   
   font-family: Arial, sans-serif;
   margin-bottom: 5px;
+  
+}
+
+@media(min-width:678px) {
+  
+  .hero-container {
+    height: 86vh;
+  }
+
+  body{
+    overflow: hidden;
+  }
   
 }
 

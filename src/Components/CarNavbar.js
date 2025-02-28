@@ -14,6 +14,10 @@ function CarNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
+  // Check if user is logged in
+    const [isLogin, setIsLogin] = useState(false);
+
    // State to store selected language and flag
    const [selectedLanguage, setSelectedLanguage] = useState({
     // name: "English",
@@ -61,6 +65,7 @@ function CarNavbar() {
   
     // Load language preference on component mount
   useEffect(() => {
+    setIsLogin(!!userId); // Convert to boolean (true if userId exists)
     const savedLang = Cookies.get("language");
     if (savedLang) {
       i18n.changeLanguage(savedLang);
@@ -163,13 +168,30 @@ const userImage = `${IMAGE_API}${userImageSub}`;
             </li>
             <li>
               <NavLink
-                to="/CarEditForm"
+                to="/carowner-profile"
                 className={({ isActive }) => (isActive ? "active-link" : "")}
               >
                 
                 {t("vehicle")}
               </NavLink>
             </li>
+
+                 {isLogin && (
+               <li className="lg:hidden">
+                <NavLink
+                            to={`/carprofile/${userId}`}
+                            className={({ isActive }) => (isActive ? "active-link" : "")}
+                          >
+                            {t("profile")}
+                            </NavLink>  </li>
+            )}
+
+            {isLogin && (
+  <li className="cursor-pointer text-white" onClick={handleLogout}>
+  {i18n.t("logout")}
+</li>
+)}
+
           
            
               {/* Language Dropdown */}
@@ -234,7 +256,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
            
             {/* <FontAwesomeIcon icon={faUser} className="user-icon" /> */}
             <div className="navbar-profile">
-                        <div className="profile-dropdown-trigger" onClick={toggleProfileDropdown}>
+                        <div className="profile-dropdown-trigger flex" onClick={toggleProfileDropdown}>
                         <img
                             src={userImage}// Replace with the actual user profile image URL
                             alt="Profile"
@@ -244,8 +266,8 @@ const userImage = `${IMAGE_API}${userImageSub}`;
                         </div>
                         {isProfileDropdownOpen && (
                           <ul className="profile-dropdown">
-                            <li onClick={() => navigate(`/driver-profile/${userId}`)}> {t("profile")} </li>
-                            <li onClick={() => navigate("/driver-profile")}>{t("editProfile")}</li>
+                            <li onClick={() => navigate(`/carowner-profile/${userId}`)}> {t("profile")} </li>
+                            <li onClick={() => navigate("/carowner-profile")}>{t("editProfile")}</li>
                             <li onClick={handleLogout}>{t("logout")}</li>
                           </ul>
                         )}

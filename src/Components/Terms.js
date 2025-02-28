@@ -9,8 +9,8 @@ function Terms() {
       <Container
         maxWidth="md"
         sx={{
-          mt: 4,
-          mb: 4,
+          mt: { xs: 0, sm: 0, md: 4 },
+          mb: { xs: 0, sm: 0, md: 4 },
           p: 3,
           backgroundColor: "#f9f9f9",
           borderRadius: 2,
@@ -33,7 +33,7 @@ function Terms() {
           carefully.
         </Typography>
 
-        <Box sx={{ maxHeight: "60vh", overflowY: "auto", pr: 1 }}>
+        <Box sx={{ maxHeight: { xs: "100%", sm: "40vh" }, overflowY: "auto", pr: 1 }}>
           <Typography variant="h6" gutterBottom sx={{ mt: 3, color: "#444" }}>
             1. General Terms
           </Typography>

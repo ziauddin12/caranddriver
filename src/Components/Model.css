@@ -85,4 +85,12 @@
       transform: translateY(0);
     }
   }
-  
+
+  @media (min-width: 678px) {
+    .page-driver-profile, .page-carowner-profile, .profile, .carprofile {
+      overflow: auto !important;
+    }
+
+    
+    
+  }

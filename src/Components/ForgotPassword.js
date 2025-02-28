@@ -72,7 +72,7 @@ function ForgotPassword() {
           alt="Forgot Password Image"
           src={registerImg}
         />
-        <div className="registerContainer lg:rounded-md lg:absolute lg:top-[37%] lg:bg-[#ffffffd4]  lg:p-7 lg:right-0 lg:left-0">
+        <div className="registerContainer rounded-md lg:absolute  lg:top-[37%] lg:bg-[#ffffffd4]  p-7 right-0 left-0">
           <form onSubmit={handleSubmit} className="w-full mt-4">
           <h2 className="text-2xl font-semibold mb-4 text-center">
                 {t("forgotPassword")}
@@ -81,7 +81,7 @@ function ForgotPassword() {
                 {t("forgotPasswordInstructions")}
               </p>
 
-            <div className="flex w-full items-center">
+            <div className="lg:flex w-full items-center">
               
               {/* Email Field */}
               <label htmlFor="email" class="w-[100px]">{t("email")}</label>

@@ -2,6 +2,7 @@ import React from "react";
 import "./Home.css";
 import Navbar from "./Navbar";
 import Imageleft from "../assets/salesman-car-showroom.jpg";
+import { Link } from "react-router-dom";
 
 function HomePage() {
   return (
@@ -45,7 +46,7 @@ function HomePage() {
               </h5> 
               <p>
                 <span>If your driver is unavailable due to illness or</span>
-                <span> other urgent matters, Drivewill's Hot Booking</span>
+                <span> other urgent matters, Drivewill's Hot Booking </span>
                 <span>Service can swiftly find a short-term </span>
                 <span>replacement </span>
               </p>
@@ -54,7 +55,7 @@ function HomePage() {
              
               <h5 className="flex items-center gap-2">
                 <span className='inline-block  -ml-[25px] tickIcon font-extrabold w-5 h-[30px] text-red-500 flex-shrink-0'>&#10003; </span>
-                <span>Rent Out Your Car with a Driver for Intercity Trips</span>
+                <span>Rent Out Your Car with a Driver for Intercity Trips </span>
               </h5> 
               <p>
                 <span>Rent out your car for intercity trips with a </span>
@@ -62,11 +63,11 @@ function HomePage() {
                 <span>
                   trusted drivers, hired specifically for your trip, to
                 </span>
-                <span>maximize your rental income.</span>
+                <span> maximize your rental income.</span>
               </p>
             </div>
             <div className="buttonContainer">
-              <button>Find a Driver</button>
+            <Link to="/register"> <button>Find a Driver</button></Link>
             </div>
           </div>
         </div>

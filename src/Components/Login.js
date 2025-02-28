@@ -10,7 +10,22 @@ import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 
 function Login() {
+  const navigate = useNavigate(); // Get navigate function
 
+  const getisVerified = localStorage.getItem('isVerified'); 
+  const userType = localStorage.getItem('userType'); 
+  if (getisVerified === false) {
+    navigate('/verify-opt');
+  }
+
+  if (userType === 'driver') {
+    // Navigate to DriverEditForm if user is a driver
+    navigate('/driver-profile');
+  } else if (userType === 'carowner') {
+    // Navigate to CarEditForm if user is a car owner
+    navigate('/carowner-profile');
+  }
+ 
   const [formData, setFormData] = useState({
     email: "",
     password: "", 
@@ -18,7 +33,7 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
 
-  const navigate = useNavigate(); // Get navigate function
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,8 +68,17 @@ function Login() {
         localStorage.setItem("userId", response.data.user.id);
         localStorage.setItem("userType", response.data.user.userType);
         localStorage.setItem("userImage", response.data.user.userImage);
+        localStorage.setItem("isVerified", response.data.user.isVerfied);
 
         const userType = response.data.user.userType; // Assuming the response includes the user's type (driver/carowner)
+        const isVerified = response.data.user.isVerfied;
+
+        console.log(isVerified);
+
+        if (isVerified === false ) {
+          navigate('/verify-opt');
+        } else {
+
         if (userType === 'driver') {
           // Navigate to DriverEditForm if user is a driver
           navigate('/driver-profile');
@@ -62,6 +86,8 @@ function Login() {
           // Navigate to CarEditForm if user is a car owner
           navigate('/carowner-profile');
         }
+
+      }
 
         // Clear any messages and reset form
         setSuccessMessage("Login successful!");
@@ -86,7 +112,7 @@ function Login() {
 
   return (
     <>
-      <div style={{ backgroundImage: "#F4F4F4", height: "auto" }}>
+      <div style={{ backgroundColor: "#F4F4F4", height: "auto" }}>
         <Navbar />
         <Box
           component="img"
@@ -94,7 +120,7 @@ function Login() {
           alt="Login Image"
           src={registerImg}
         />
-        <div className="registerContainer ">
+        <div className="registerContainer rounded-md lg:absolute  lg:top-[37%] lg:bg-[#ffffffd4]  p-7 right-0 left-0">
   <form onSubmit={handleSubmit} className="w-full mt-4">
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-full items-center">
       {/* Email Field */}
@@ -129,7 +155,7 @@ function Login() {
 
     {/* Submit Button */}
     <div className="w-full text-right">
-        <button type="submit" className="registerBtn w-full mt-4">
+        <button type="submit" className="registerBtn w-full mt-4 bg-orange-500 hover:bg-orange-500">
           {t("login")}
         </button>
     </div>

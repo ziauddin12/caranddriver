@@ -2,6 +2,7 @@ import React from "react";
 import "./DriverBenfits.css";
 import Navbar from "./Navbar";
 import Imageright from "../assets/navigator-smartphone-car-night-closeup.jpg";
+import { Link } from "react-router-dom";
 
 function DriverBenfits() {
   return (
@@ -48,7 +49,7 @@ function DriverBenfits() {
               </p>
             </div>
             <div className="buttonContainerDriver">
-              <button className="btnDriver">Get your ride now</button>
+              <Link to="/register"> <button className="btnDriver">Get your ride now</button></Link>
             </div>
           </div>
 
@@ -57,7 +58,7 @@ function DriverBenfits() {
             <img
               src={Imageright}
               alt="Driver Benefits"
-              className="w-full h-auto max-h-[500px] rounded-lg object-cover shadow-lg"
+              className="w-full h-auto max-h-[400px] rounded-lg object-cover shadow-lg"
             />
           </div>
         </div>

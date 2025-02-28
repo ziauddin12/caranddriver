@@ -168,6 +168,14 @@ function Navbar() {
     </NavLink>
   </li>
 )}
+
+{isLogin && (
+  <li className="cursor-pointer text-white" onClick={handleLogout}>
+  {i18n.t("logout")}
+</li>
+)}
+
+ {!isLogin && (
             <li className="showSignUp">
               <NavLink
                 to="/register"
@@ -177,6 +185,7 @@ function Navbar() {
               </NavLink>
             </li>
           
+        )}
            
               {/* Language Dropdown */}
     <div className="navbar-language">
@@ -248,12 +257,12 @@ function Navbar() {
           <div className="navbar-signup">
            
           {!isLogin ? (
-        <button className="signup-button" onClick={handleRegisterClick}>
+        <button className="signup-button bg-orange-500 hover:bg-orange-500" onClick={handleRegisterClick}>
            {t("signup")}
         </button>
       ) : (
         <div className="navbar-profile">
-          <div className="profile-dropdown-trigger" onClick={toggleProfileDropdown}>
+          <div className="profile-dropdown-trigger flex" onClick={toggleProfileDropdown}>
             <img
               src={userImage}
               alt="Profile"

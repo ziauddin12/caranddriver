@@ -60,7 +60,7 @@ function ResetPassword() {
           alt="Forgot Password Image"
           src={registerImg}
         />
-        <div className="registerContainer lg:rounded-md lg:absolute lg:top-[37%] lg:bg-[#ffffffd4]  lg:p-7 lg:right-0 lg:left-0">
+        <div className="registerContainer rounded-md lg:absolute  lg:top-[37%] lg:bg-[#ffffffd4]  p-7 right-0 left-0">
         <h2 className="text-2xl font-bold text-center mb-4">{t("resetpassword")}</h2>
         {message && <p className="text-green-600 text-center">{message}</p>}
         {error && <p className="text-red-600 text-center">{error}</p>}
