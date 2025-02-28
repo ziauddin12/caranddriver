@@ -23,8 +23,9 @@ function Navbar() {
   const { t, i18n } = useTranslation(); // Hook for translation
 
   // Check if user is logged in
-  const [isLogin, setIsLogin] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const authToken = localStorage.getItem('authToken');
+  const [isLogin, setIsLogin] = useState(!!authToken);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(!!authToken);
 
 
   const toggleMenu = () => {
@@ -95,8 +96,9 @@ function Navbar() {
     };
   
     const handleLogout = () => {
-      localStorage.removeItem("userId");
-      localStorage.removeItem("userImage");
+      //localStorage.removeItem("userId");
+      //localStorage.removeItem("userImage");
+      localStorage.clear(); // Clears all items from localStorage 
       setIsLogin(false); // Update state
       navigate("/login");
     };

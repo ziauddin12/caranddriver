@@ -13,7 +13,9 @@ import Cookies from "js-cookie";
 function CarNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const authToken = localStorage.getItem('authToken');
+ // const isLoggedIn = !!authToken; // Check for auth token
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(!!authToken);
 
   // Check if user is logged in
     const [isLogin, setIsLogin] = useState(false);
@@ -97,8 +99,7 @@ function CarNavbar() {
       );
   
       // Clear local storage and navigate to home
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userType');
+      localStorage.clear(); // Clears all items from localStorage 
       navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);
@@ -106,6 +107,7 @@ function CarNavbar() {
   };
 
   const toggleProfileDropdown = () => {
+   
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 

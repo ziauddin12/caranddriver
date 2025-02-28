@@ -13,7 +13,8 @@ import Cookies from "js-cookie";
 function DriverNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const authToken = localStorage.getItem('authToken');
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(!!authToken);
    const [isLogin, setIsLogin] = useState(false);
   const { t, i18n } = useTranslation(); // Hook for translation
    // State to store selected language and flag
@@ -97,8 +98,9 @@ useEffect(() => {
       );
   
       // Clear local storage and navigate to home
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userType');
+      //localStorage.removeItem('authToken');
+     // localStorage.removeItem('userType');
+     localStorage.clear(); // Clears all items from localStorage 
       navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);
