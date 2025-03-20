@@ -25,7 +25,7 @@ function Navbar() {
   // Check if user is logged in
   const authToken = localStorage.getItem('authToken');
   const [isLogin, setIsLogin] = useState(!!authToken);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(!!authToken);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
 
   const toggleMenu = () => {
@@ -272,7 +272,7 @@ function Navbar() {
             />
             <FontAwesomeIcon icon={faCaretDown} className="ml-2" />
           </div>
-          {isProfileDropdownOpen && (
+          {isProfileDropdownOpen && authToken && (
             <ul className="profile-dropdown">
               <li onClick={() => navigate(`/${isDriverOrCarowner}/${localStorage.getItem("userId")}`)}>
                 {i18n.t("profile")}

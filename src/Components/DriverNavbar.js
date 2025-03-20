@@ -14,7 +14,7 @@ function DriverNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const authToken = localStorage.getItem('authToken');
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(!!authToken);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
    const [isLogin, setIsLogin] = useState(false);
   const { t, i18n } = useTranslation(); // Hook for translation
    // State to store selected language and flag
@@ -140,7 +140,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
           >
             <li>
               <NavLink
-                to="/"
+                to="/myaccount"
                 className={({ isActive }) => (isActive ? "active-link" : "")}
               >
                 {t("home")}
@@ -157,7 +157,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
             </li>
             <li>
               <NavLink
-                to="/contact"
+                to="/notification"
                 className={({ isActive }) => (isActive ? "active-link" : "")}
               >
                 {t("notifications")}
@@ -278,7 +278,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
               />
               <FontAwesomeIcon icon={faCaretDown} className="ml-2" />
             </div>
-            {isProfileDropdownOpen && (
+            {isProfileDropdownOpen && authToken && (
               <ul className="profile-dropdown">
                 <li onClick={() => navigate(`/driver-profile/${userId}`)}> {t("profile")} </li>
                 <li onClick={() => navigate("/driver-profile")}>{t("editProfile")}</li>

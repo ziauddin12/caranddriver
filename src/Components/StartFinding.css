@@ -89,6 +89,10 @@ h2 {
   
 }
 
+.page-dashboard {
+  overflow: auto;
+}
+
 .cta-buttons {
   /* margin-top: 20px; */
   text-align: center;

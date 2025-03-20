@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 
+
 //import fromicon from "../assets/formicon.png";
 
-import { GoHome } from "react-icons/go";
-import { TfiEmail } from "react-icons/tfi";
-import { GoBell } from "react-icons/go";
-import { TfiWallet } from "react-icons/tfi";
 import { FaCalendarAlt } from "react-icons/fa";
 
-import cloudcomputing from "../assets/cloudcomputing.png";
+//import cloudcomputing from "../assets/cloudcomputing.png";
 import { CiStar } from "react-icons/ci";
 
-import { IoCarSportOutline } from "react-icons/io5";
+import { Container } from '@mui/material';
+
+//import { IoCarSportOutline } from "react-icons/io5";
 //import car from "../assets/car.webp";
 //import Navbar from "./Navbar";
 import CarNavbar from "./CarNavbar";
@@ -21,6 +20,7 @@ import IMAGE_API from '../Components/services/ImgBase';
 import UserProfile from '../Components/UserProfile';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Footer from "./Footer"; 
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -267,6 +267,32 @@ const CustomInput = ({ value, onClick }) => (
     <>
     <CarNavbar/>
       <div className=" bg-[#FFFFFF] p-5">
+        <Container maxWidth="lg" sx={{
+                     minHeight: {
+                        xs: '60vh', // 60% of the viewport height on mobile
+                        sm: '60vh', // Keep 70vh on small screens and up
+                      },
+                 maxHeight: {
+                    xs: '74vh', // For mobile (extra small screens), set maxHeight to 100%
+                    sm: '100%', // For small screens and up, set maxHeight to 80vh
+                  },
+                backgroundColor: {
+                    xs: '#fff', // For mobile, set background color to white
+                    sm: 'transparent', // For small screens and up, use transparent (or any other color you prefer)
+                  },
+                overflowY: 'scroll',
+                '&:hover': {
+                  overflowY: 'scroll',
+                },
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                },
+                scrollbarWidth: 'none',
+                paddingBottom: {
+                    xs: '20px', // For mobile, set paddingBottom to 20px
+                    sm: '0', // For small screens and up, no bottom padding
+                  },
+            }}>
         <div className="  shadow-md max-w-6xl mx-auto mt-8 border-[1px] lg:border-2  border-[#000000] text-[#000000] ">
           <div className=" pb-4 mt-5 mb-2 lg:mb-20  ">
              <UserProfile userData={userData} setUserData={setUserData} />
@@ -534,9 +560,6 @@ const CustomInput = ({ value, onClick }) => (
 
                 <div className="col-span-2 w-full mt-1">
                   <h2 className="mb-4 border-y border-t-[1px] lg:border-t-2 uppercase border-[#000000] text-xl font-bold py-2 text-center w-full flex justify-center gap-2">
-                    <span className="text-3xl">
-                      <img src={cloudcomputing} alt="" className="w-8" />
-                    </span>
                     <span>{t("uploads")}</span>
                   </h2>
                   <div className="flex justify-evenly items-center text-black text-xs mb-3">
@@ -609,23 +632,24 @@ const CustomInput = ({ value, onClick }) => (
               <div>
                 <div className="">
                   <div className=" bg-white border border-black rounded-lg   pb-6 lg:w-[34.5rem] h-[20rem] lg:h-[32.4rem] flex justify-center items-center   lg:absolute lg:top-[0rem] lg:right-0 ">
-                    {previewImage && (
-                      <img
-                      src={previewImage}
-                      alt=""
-                      className="  object-cover mt-2 lg:mt-0  w-[26rem] h-[18rem]  lg:h-[26rem] "
-                    />
-                     ) }
+                    
+{previewImage ? (
+    <img
+      src={previewImage}
+      alt=""
+      className="object-cover mt-2 lg:mt-0  w-[26rem] h-[18rem]  lg:h-[26rem]  cursor-pointer"
+      onClick={handleUploadClick}
+    />
+  ) : (
+    <div
+      className="lg:w-2/3 cursor-pointer py-20"
+      onClick={handleUploadClick}
+    >
+      <span className="ml-2">Upload your personal image</span>
+    </div>
+  )}
                     
                   </div>
-                  <span className="text-3xl bg-white lg:bg-transparent  flex justify-end lg:inline-block   ">
-                    <img
-                      src={cloudcomputing}
-                      alt=""
-                      className="w-8 cursor-pointer lg:translate-x-[17rem] "
-                      onClick={handleUploadClick}
-                    />
-                  </span>
 
                   <input
         id="uploadInput"
@@ -759,32 +783,10 @@ const CustomInput = ({ value, onClick }) => (
           </div>
         </div>
       )}
-      <div>
-          {/* Black Bar for Web View */}
-          <div className="hidden lg:flex bg-black  mx-auto mt-9 justify-center max-w-6xl text-white py-4 text-center text-lg">
-          {t("rightsReserved")}
-          </div>
-
-          {/* Footer Menu for Mobile View */}
-          <div className="flex justify-around text-3xl lg:hidden text-[#5a3623] mt-4">
-            <a href="#" className="text-center">
-              <GoHome />
-            </a>
-            <a href="#" className="text-center">
-              <TfiEmail />
-            </a>
-            <a href="#" className="text-center">
-              <GoBell />
-            </a>
-            <a href="#" className="text-center">
-              <TfiWallet />
-            </a>
-            <a href="#" className="text-center text-blue-500">
-              <IoCarSportOutline />
-            </a>
-          </div>
-        </div>
+       
+       </Container>
       </div>
+      <Footer/>
     </>
   );
 };

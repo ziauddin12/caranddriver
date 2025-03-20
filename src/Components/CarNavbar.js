@@ -15,7 +15,7 @@ function CarNavbar() {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const authToken = localStorage.getItem('authToken');
  // const isLoggedIn = !!authToken; // Check for auth token
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(!!authToken);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // Check if user is logged in
     const [isLogin, setIsLogin] = useState(false);
@@ -137,7 +137,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
           >
             <li>
               <NavLink
-                to="/"
+                to="/dashboard"
                 className={({ isActive }) => (isActive ? "active-link" : "")}
               >
                 {t("home")}
@@ -154,7 +154,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
             </li>
             <li>
               <NavLink
-                to="/contact"
+                to="/carowner-notifiction"
                 className={({ isActive }) => (isActive ? "active-link" : "")}
               >
                 {t("notifications")}
@@ -177,22 +177,24 @@ const userImage = `${IMAGE_API}${userImageSub}`;
                 {t("vehicle")}
               </NavLink>
             </li>
-
-                 {isLogin && (
-               <li className="lg:hidden">
+   {isLogin && (
+          <>
+              
+              {/* <li className="lg:hidden">
                 <NavLink
                             to={`/carprofile/${userId}`}
                             className={({ isActive }) => (isActive ? "active-link" : "")}
                           >
                             {t("profile")}
-                            </NavLink>  </li>
+                            </NavLink>  </li> */}
+
+                            <li className="cursor-pointer text-white" onClick={handleLogout}>
+                {i18n.t("logout")}
+</li>
+                            </>
             )}
 
-            {isLogin && (
-  <li className="cursor-pointer text-white" onClick={handleLogout}>
-  {i18n.t("logout")}
-</li>
-)}
+         
 
           
            
@@ -212,7 +214,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
                 {selectedLanguage.name}
               </span>
             </div>
-            {isLanguageDropdownOpen && (
+            {isLanguageDropdownOpen && authToken && (
               <ul className="language-dropdown">
                 <li onClick={() => handleLanguageChange("English", "https://flagcdn.com/w40/us.png")}>
                   <img
@@ -268,8 +270,10 @@ const userImage = `${IMAGE_API}${userImageSub}`;
                         </div>
                         {isProfileDropdownOpen && (
                           <ul className="profile-dropdown">
-                            <li onClick={() => navigate(`/carowner-profile/${userId}`)}> {t("profile")} </li>
+                           {/* <li onClick={() => navigate(`/carowner-profile/${userId}`)}> {t("profile")} </li> */}
+                            
                             <li onClick={() => navigate("/carowner-profile")}>{t("editProfile")}</li>
+                             
                             <li onClick={handleLogout}>{t("logout")}</li>
                           </ul>
                         )}

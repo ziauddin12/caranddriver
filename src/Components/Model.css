@@ -11,6 +11,12 @@
     justify-content: center;
     z-index: 1000;
   }
+
+  .page-dashboard{
+    background-color: #fff;
+  }
+
+   
   
   /* Modal container */
   .modal-container {
@@ -87,10 +93,22 @@
   }
 
   @media (min-width: 678px) {
-    .page-driver-profile, .page-carowner-profile, .profile, .carprofile {
+    .page-driver-profile, .page-carowner-profile, .profile, .carprofile, .page-profile-details, .page-job {
       overflow: auto !important;
     }
+    
 
     
     
   }
+
+  .page-job{
+    background-color: #fff;
+  }
+
+  @media (max-width: 678px) {
+  .page-carowner-notifiction, .page-job,  .page-notification, .page-myaccount, .page-driver-profile {
+    background-color: #fff;
+    height: 100vh;
+  }
+}

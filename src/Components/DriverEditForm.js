@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 //import formimg from "../assets/formimg.jpeg";
 import "./Model.css";
 
-import { GoHome } from "react-icons/go";
-import { TfiEmail } from "react-icons/tfi";
-import { GoBell } from "react-icons/go";
-import { TfiWallet } from "react-icons/tfi";
-import { CiUser } from "react-icons/ci"; 
+import { Container, TextField, Autocomplete } from '@mui/material';
+
 import { FaCalendarAlt } from "react-icons/fa";
 //import { IoIosArrowDown } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";
@@ -14,11 +11,13 @@ import cloudcomputing from "../assets/cloudcomputing.png";
 import { CiStar } from "react-icons/ci";
 //import Navbar from "./Navbar";
 import DriverNavbar from "./DriverNavbar";
+import DriverFooter from "./DriverFooter";
 import API from '../Components/services/api';
 import IMAGE_API from '../Components/services/ImgBase';
 import UserProfile from '../Components/UserProfile';
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import axios from 'axios';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -47,7 +46,8 @@ const DriverEditForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null); 
+  const [cities, setCities] = useState([]);
 
   const [userData, setUserData] = useState({
     experience: "",
@@ -70,6 +70,34 @@ const DriverEditForm = () => {
   });
 
   useEffect(() => {
+          // Fetch cities when country changes
+          if (userData?.country) {
+              fetchCities(userData?.country);
+          }
+      }, [userData?.country]);
+  
+      const fetchCities = async (countryCode) => {
+          if( countryCode === 'Spain'){
+              countryCode = 'ES';
+          } else if( countryCode === 'France' ){
+              countryCode = 'FR';
+          } else if( countryCode === 'Germany' ){
+              countryCode = 'GE';
+          } else if( countryCode === 'Egypt' ){
+              countryCode = 'EG';
+          }
+  
+          try {
+              const response = await axios.get(`http://api.geonames.org/searchJSON?country=${countryCode}&maxRows=1000&username=otknews2025`);
+              if (response.data && response.data.geonames) {
+                  setCities(response.data.geonames.map(city => city.name));
+              }
+          } catch (error) {
+              console.error('Error fetching cities:', error);
+          }
+      };
+
+  useEffect(() => {
     // Simulate API call to fetch user data
     const fetchUserData = async () => {
       try {
@@ -79,8 +107,10 @@ const DriverEditForm = () => {
         const response = await API.get(`/users/${userId}`); 
         setUserData(response.data); // Adjust based on how your `API` service formats responses
 
+        if(response.data.profileImage){
+          setPreviewImage(`${IMAGE_API}${response.data.profileImage}`);
+        }
         
-        setPreviewImage(`${IMAGE_API}${response.data.profileImage}`);
         //setTempFirstName(response.data.firstName);
 
       } catch (error) {
@@ -264,6 +294,36 @@ const CustomInput = ({ value, onClick }) => (
       setShowModal(true);
     }
   };
+
+  const handleToggleServiceType = async (newServiceType) => {
+    const isAdding = !userData.serviceType.includes(newServiceType);
+  
+    try {
+      const userId = localStorage.getItem("userId");
+      const endpoint = isAdding ? "/addServiceType" : "/removeServiceType";
+      const response = await API.put(`/users/${userId}${endpoint}`, {
+        newServiceType,
+      });
+  
+      if (response.status === 200) {
+        setUserData((prev) => {
+          const updatedServiceTypes = isAdding
+            ? [...prev.serviceType, newServiceType]
+            : prev.serviceType.filter((s) => s !== newServiceType);
+          return { ...prev, serviceType: updatedServiceTypes };
+        });
+        setModalMessage(
+          `${newServiceType} ${isAdding ? "added to" : "removed from"} your services.`
+        );
+      } else {
+        setModalMessage("Error updating service type.");
+      }
+    } catch (error) {
+      setModalMessage("Error updating service type.");
+    }
+  
+    setShowModal(true);
+  };
   
   
   
@@ -311,7 +371,33 @@ const CustomInput = ({ value, onClick }) => (
   return (
     <>
     <DriverNavbar/>
-      <div className=" bg-[#FFFFFF] p-5">
+      <div className=" bg-[#FFFFFF] p-5 pb-1">
+      <Container maxWidth="lg" sx={{
+             minHeight: {
+                xs: '74vh', // 60% of the viewport height on mobile
+                sm: '70vh', // Keep 70vh on small screens and up
+              },
+         maxHeight: {
+            xs: '74vh', // For mobile (extra small screens), set maxHeight to 100%
+            sm: '70vh', // For small screens and up, set maxHeight to 80vh
+          },
+        backgroundColor: {
+            xs: '#fff', // For mobile, set background color to white
+            sm: 'transparent', // For small screens and up, use transparent (or any other color you prefer)
+          },
+        overflowY: 'scroll',
+        '&:hover': {
+          overflowY: 'scroll',
+        },
+        '&::-webkit-scrollbar': {
+          display: 'none',
+        },
+        scrollbarWidth: 'none',
+        paddingBottom: {
+            xs: '20px', // For mobile, set paddingBottom to 20px
+            sm: '0', // For small screens and up, no bottom padding
+          },
+    }}>
         <div className="  shadow-md max-w-6xl mx-auto mt-8 border-[1px]  lg:border-2 border-[#000000] text-[#000000] ">
           <div className=" pb-4 mt-5  mb-2 lg:mb-20  ">
             <UserProfile userData={userData} setUserData={setUserData} />
@@ -479,59 +565,37 @@ const CustomInput = ({ value, onClick }) => (
                   <h2 className=" mb-4 border-y uppercase border-[#000000] border-t-[1px] lg:border-t-2 text-xl  font-bold py-2  text-center w-full flex justify-center items-center gap-4 ">
                     
                     {t("services")}
-                    <span className="text-3xl cursor-pointer"
-                    onClick={() => {
-                      setIsInputVisible(true);
-                    }} >
-                      <FaPlus />
-                    </span>
+
                   </h2>
-                  <div className="grid grid-cols-1 gap-1 font-medium pl-4 ">
-                  {userData?.serviceType && userData.serviceType.length > 0 && (
-  <div>
-    {userData.serviceType.map((service, index) => (
-      <p key={index}>{service}</p>
-    ))}
-  </div>
-)}
-                  </div>
                   <div className="mt-4 mb-2 pl-4 flex items-center">
    
 
-    {isInputVisible && (
-      <div className="ml-4 flex justify-between items-center w-full p-2">
-      <select
-        value={newServiceType}
-        onChange={(e) => setNewServiceType(e.target.value)}
-        className="border border-gray-300 rounded-md p-2 w-full"
-      >
-        <option value="">Select a service type</option>
-        {["Rideshare", "Private", "Delivery", "SCHOOL", "BUSINESS", "Intercity Cargo", "Travel"].map((service) => {
-          // Filter out already added services
-          if (!userData.serviceType.includes(service)) {
-            return <option key={service} value={service}>{service}</option>;
-          }
-          return null;
-        })}
-      </select>
-
-      <button
-        onClick={handleAddServiceType}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-        disabled={!newServiceType}
-      >
-        Add
-      </button>
-      </div>
-    )}
+     
+                  <div className="ml-4 flex flex-col w-full p-2">
+  {[
+    "Rideshare", "Private", "Delivery", "SCHOOL", "BUSINESS", "Intercity Cargo", "Travel"
+  ].map((service) => (
+    <label key={service} className="flex items-center space-x-2">
+      <input
+        type="checkbox"
+        value={service}
+        checked={userData.serviceType.includes(service)}
+        onChange={() => handleToggleServiceType(service)}
+        className="form-checkbox text-blue-500"
+      />
+      <span>{service}</span>
+    </label>
+  ))}
+</div>
+   
   </div>
+                   
+                  
                 </div>
 
                 <div className="col-span-2   w-full ">
                   <h2 className="mb-4 border-y border-t-[1px] lg:border-t-2 uppercase border-[#000000]  text-xl  font-bold py-2  text-center w-full flex justify-center gap-2 ">
-                    <span className="text-3xl ">
-                      <img src={cloudcomputing} alt="" className="w-8" />
-                    </span>
+                    
                     <span>{t("uploads")}</span>
                   </h2>
                   <div className="flex justify-evenly items-center text-black text-xs mb-3">
@@ -632,21 +696,24 @@ const CustomInput = ({ value, onClick }) => (
             <div className=" flex flex-col justify-end  lg:relative ">
               <div>
                 <div className="">
-                  <div className="bg-white border border-black  rounded-lg    lg:w-[34.5rem] lg:h-[22.7rem] flex justify-center items-center   lg:absolute lg:-top-2 lg:right-0  ">
-                    <img
-                      src={previewImage}
-                      alt=""
-                      className=" object-cover  w-[28rem]  h-[20rem] "
-                    />
+                  <div className="bg-white border border-black  rounded-lg    lg:w-[34.5rem] lg:h-[22.7rem] flex justify-center items-center   lg:absolute lg:-top-2 lg:right-0  my-2 lg:my-0">
+                  {previewImage ? (
+    <img
+      src={previewImage}
+      alt=""
+      className="object-cover cursor-pointer w-[28rem] h-[20rem]"
+      onClick={handleUploadClick}
+    />
+  ) : (
+    <div
+      className="lg:w-2/3 cursor-pointer py-20"
+      onClick={handleUploadClick}
+    >
+      <span className="ml-2">Upload your personal image</span>
+    </div>
+  )}
                   </div>
-                  <span className="text-3xl bg-white lg:bg-transparent  flex justify-end lg:inline-block   ">
-                    <img
-                      src={cloudcomputing}
-                      alt=""
-                      className="w-8 cursor-pointer  lg:translate-x-[17rem]"
-                      onClick={handleUploadClick}
-                    />
-                  </span>
+                   
                   {/* Hidden file input */}
       <input
         id="uploadInput"
@@ -734,7 +801,7 @@ const CustomInput = ({ value, onClick }) => (
                       <label className="block w-[40%] lg:w-[30%] font-medium text-base  sm:text-lg ">
                       {t("city")}
                       </label>
-                      <input
+                     {/* <input
                         type="text"
                         name="city"
                         value={userData?.city}
@@ -745,7 +812,24 @@ const CustomInput = ({ value, onClick }) => (
                           }
                         }}
                         className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
-                      />
+                      /> */}
+
+<select
+  className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
+  id="city"
+  name="city"
+  value={userData?.city || ""} // Ensure a fallback value
+  onChange={(e) => setUserData((prev) => ({ ...prev, city: e.target.value }))} // Update state
+>
+  <option value="">Select City</option> {/* Placeholder option */}
+  {cities.map((city, index) => (
+    <option key={index} value={city}>
+      {city}
+    </option>
+  ))}
+</select>
+
+                       
                     </div>
                      
                     <div className="flex justify-between items-center ">
@@ -804,32 +888,11 @@ const CustomInput = ({ value, onClick }) => (
           </div>
         </div>
       )}
- <div>
-          {/* Black Bar for Web View */}
-          <div className="hidden lg:flex bg-black  mx-auto mt-9 justify-center max-w-6xl text-white py-4 text-center text-lg">
-            {t("rightsReserved")}
-          </div>
 
-          {/* Footer Menu for Mobile View */}
-          <div className="flex justify-around text-3xl lg:hidden text-[#5a3623] mt-4">
-            <a href="#" className="text-center">
-              <GoHome />
-            </a>
-            <a href="#" className="text-center">
-              <TfiEmail />
-            </a>
-            <a href="#" className="text-center">
-              <GoBell />
-            </a>
-            <a href="#" className="text-center">
-              <TfiWallet />
-            </a>
-            <a href="#" className="text-center text-blue-500">
-              <CiUser />
-            </a>
-          </div>
-        </div>
+      </Container>
+ 
       </div>
+      <DriverFooter/>
     </>
   );
 };

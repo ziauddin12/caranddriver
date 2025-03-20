@@ -40,6 +40,7 @@ function VerifyOPTcode() {
         userId
       });
       setMessage(response.data.message);
+      localStorage.setItem("isVerified", JSON.stringify(true));
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");

@@ -10,6 +10,8 @@ import { BrowserRouter, Route, Routes, useLocation  } from "react-router-dom";
 import NotFound from "./Components/NotFound.js";
 import Contact from "./Components/Contact.js";
 import Terms from "./Components/Terms.js";
+import CarOwnerPrivateRoute from "./Components/CarOwnerPrivateRoute.js"; 
+
 import DriverEditForm from "./Components/DriverEditForm.js";
 import CarEditForm from "./Components/CarEditForm.js";
 import PrivateRoute from "./Components/PrivateRoute.js";
@@ -19,6 +21,23 @@ import ForgotPassword from "./Components/ForgotPassword.js";
 import ResetPassword from "./Components/ResetPassword.js";
 import PrivacyPolicy from "./Components/PrivacyPolicy.js";
 import VerifyOPTcode from "./Components/VerifyOPTcode.js";
+import PostJobPage from "./Components/PostJobPage.js";
+import DashboardPage from "./Components/DashboardPage.js";
+import EditJobPage from "./Components/EditJobPage.js";
+
+import UserListPage from "./Components/UserListPage.js";
+
+import NotificationPage from "./Components/NotificationPage.js";
+import JobDetailsPage from "./Components/JobDetailsPage.js";
+
+import NotificationCarOwner from "./Components/NotificationCarOwner.js";
+
+import DriverProfileCarOwner from "./Components/DriverProfileCarOwner.js";
+
+import DriverDashboardPage from "./Components/DriverDashboardPage.js";
+
+
+
 
 
 import "./Components/i18n.js"; // Import i18n configuration
@@ -82,22 +101,34 @@ function App() {
             path="/profile/:profileId"
             element={<PrivateRoute element={<DriverProfile />} />}
           />
-          <Route
-            path="/carowner-profile/:profileId"
-            element={<PrivateRoute element={<CarProfile />} />}
-          />
+          
+          <Route path="/myaccount" element={<DriverDashboardPage />} />
 
-       <Route
-            path="/carprofile/:profileId"
-            element={<PrivateRoute element={<CarProfile />} />}
-          />
+          <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/job/:jobId" element={<JobDetailsPage />} />
 
 
+         {/* car owner login*/}
+          <Route path="/carowner-profile/:profileId"  element={<CarOwnerPrivateRoute element={<CarProfile />} />} />
 
-          <Route
-            path="/carowner-profile"
-            element={<PrivateRoute element={<CarEditForm />} />}
-          />
+          <Route path="/carprofile/:profileId" element={<CarOwnerPrivateRoute element={<CarProfile />} />}/>
+
+
+
+          <Route path="/carowner-profile" element={<CarOwnerPrivateRoute element={<CarEditForm />} />}/>
+          <Route path="/driver-list/:jobId" element={<CarOwnerPrivateRoute element={<UserListPage />} />} />
+
+          <Route path="/dashboard" element={<CarOwnerPrivateRoute element={<DashboardPage />} />} />
+          <Route path="/post-new-job" element={<CarOwnerPrivateRoute element={<PostJobPage />} />} />
+          <Route path="/edit-job/:jobId" element={<CarOwnerPrivateRoute element={<EditJobPage />} />} />
+           
+          <Route path="/carowner-notifiction" element={<CarOwnerPrivateRoute element={<NotificationCarOwner />} />} />
+  
+          <Route path="/profile-details/:profileId" element={<CarOwnerPrivateRoute element={<DriverProfileCarOwner />} />} />
+          
+        
+
+        
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
