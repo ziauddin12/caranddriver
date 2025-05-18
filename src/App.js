@@ -17,6 +17,10 @@ import CarEditForm from "./Components/CarEditForm.js";
 import PrivateRoute from "./Components/PrivateRoute.js";
 import DriverProfile from "./Components/DriverProfile.js";
 import CarProfile from "./Components/CarProfile.js";
+
+import CarViewProfile from "./Components/CarViewProfile.js";
+
+
 import ForgotPassword from "./Components/ForgotPassword.js";
 import ResetPassword from "./Components/ResetPassword.js";
 import PrivacyPolicy from "./Components/PrivacyPolicy.js";
@@ -102,6 +106,7 @@ function App() {
             element={<PrivateRoute element={<DriverProfile />} />}
           />
           
+          
           <Route path="/myaccount" element={<DriverDashboardPage />} />
 
           <Route path="/notification" element={<NotificationPage />} />
@@ -113,6 +118,7 @@ function App() {
 
           <Route path="/carprofile/:profileId" element={<CarOwnerPrivateRoute element={<CarProfile />} />}/>
 
+          <Route path="/view-profile/:profileId" element={<CarViewProfile />} />
 
 
           <Route path="/carowner-profile" element={<CarOwnerPrivateRoute element={<CarEditForm />} />}/>

@@ -16,6 +16,8 @@ import IMAGE_API from '../Components/services/ImgBase';
 import UserProfile from '../Components/UserProfile';
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const DriverProfileCarOwner = () => {
   const { profileId } = useParams();
@@ -57,7 +59,7 @@ const DriverProfileCarOwner = () => {
         const userId = profileId; 
     
         // Using template literals for string interpolation
-        const response = await API.get(`/users/${userId}`); 
+        const response = await API.get(`/users/bycar/${userId}`); 
         setUserData(response.data); // Adjust based on how your `API` service formats responses
 
         
@@ -95,6 +97,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   
   return (
     <>
+    <div className="min-h-screen flex flex-col justify-between">
     <CarNavbar/>
     <Container  sx={{
         width: '100%', // Full width
@@ -139,7 +142,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                       {t("experience")}
                       </td>
                       <td className=" border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
-                        <p>{userData?.experience}</p>
+                        <p>{userData?.experience} years</p>
                       </td>
                     </tr>
                     <tr className=" border-b-[1px] lg:border-b-2 border-[#000000]">
@@ -155,7 +158,8 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                       {t("licenseNumber")}
                       </td>
                       <td className="border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
-                        <p>{userData?.licenseNumber}</p>
+                        <p>{userData?.licenseNumber}
+                        </p>
                       </td>
                     </tr>
                     <tr className="border-b-[1px] lg:border-b-2 border-[#000000]">
@@ -169,10 +173,16 @@ const formattedDate = formatDate(userData?.dateOfBirth);
                         </div>
                       </td>
                     </tr>
-                    <tr className=" border-[#000000]">
-                      <td className="px-3 font-thin lg:font-semibold text-lg lg:text-xl py-1">{t("phone")}</td>
+                     
+                    <tr className="border-b-[1px] lg:border-b-2 border-[#000000]">
+                      <td className="px-3 font-thin lg:font-semibold text-lg lg:text-xl py-1">
+                      {t("phone")}
+                      </td>
                       <td className="border-l-[1px] lg:border-l-2 px-3 border-[#000000]">
-                       <p>{userData?.phone}</p>
+                        <div className="flex justify-between items-center">
+                          <p>XXXXXXXXXX</p>
+                          {/* <img src={calendar} alt="calendar" className="w-6" /> */}
+                        </div>
                       </td>
                     </tr>
                   </tbody>
@@ -197,43 +207,68 @@ const formattedDate = formatDate(userData?.dateOfBirth);
 
                 <div className="col-span-2   w-full ">
                   <h2 className="mb-4 border-y border-t-[1px] lg:border-t-2 uppercase border-[#000000]  text-xl  font-bold py-2  text-center w-full flex justify-center gap-2 ">
-                    <span className="text-3xl ">
-                      <img src={cloudcomputing} alt="" className="w-8" />
-                    </span>
-                    <span>{t("uploads")}</span>
+                    
+                    <span>Documents</span>
                   </h2>
                   <div className="flex  justify-evenly items-center text-black text-xs mb-3">
                     {/* ID Upload Button */}
-                    <div className="relative">
-                      {/* Hidden File Input */}
-                      <img src={`${IMAGE_API}${userData?.uploadID}`} className=" max-h-20" alt=""></img>
-                      {/* Visible Button */}
-                      <a href={`${IMAGE_API}${userData?.uploadID}`} alt="">{t("uploadID")}</a>
-                    </div>
+                    <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.uploadID ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">ID</span>
+</div>
 
                     {/* License Upload Button */}
-                    <div className="relative">
 
-                    <img src={`${IMAGE_API}${userData?.uploadLicense}`} className=" max-h-20" alt=""></img>
-                    <a href={`${IMAGE_API}${userData?.uploadLicense}`} alt="">{t("uploadLicense")}</a>
-                      
-                    </div>
+                    <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.uploadLicense ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">License</span>
+</div>
+                     
 
                     {/* Criminal Record Upload Button */}
-                    <div className="relative">
 
-                    <img src={`${IMAGE_API}${userData?.uploadCriminalRecord}`} className=" max-h-20" alt=""></img>
-                    <a href={`${IMAGE_API}${userData?.uploadCriminalRecord}`} alt="">{t("uploadCriminalRecord")}</a>
-                      
-                      
-                    </div>
+                    <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.uploadCriminalRecord ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">Criminal Record</span>
+</div>
+
+                    
 
                     {/* Drug Test Upload Button */}
-                    <div className="relative">
-                    <img src={`${IMAGE_API}${userData?.uploadDrugTest}`} className=" max-h-20" alt=""></img>
-                       <a href={`${IMAGE_API}${userData?.uploadDrugTest}`} alt=""> {t("uploadDrugTest")}</a>
-                      
-                    </div>
+
+                    <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.uploadDrugTest ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">Drug Test</span>
+</div>
+                    
                   </div>
                 </div>
               </div>
@@ -316,7 +351,7 @@ const formattedDate = formatDate(userData?.dateOfBirth);
  </Container>
    <Footer/>
       
-      
+   </div>  
     </>
   );
 };

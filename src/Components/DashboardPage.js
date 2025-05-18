@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, CircularProgress, Typography, Box, Card, CardContent, CardActions, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Container, CircularProgress, DialogContentText, Typography, Box, Card, CardContent, CardActions, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import API from '../Components/services/api';
 import { useNavigate } from 'react-router-dom';
 import CarNavbar from "./CarNavbar";
@@ -16,6 +16,9 @@ const DashboardPage = () => {
     const [modalMessage, setModalMessage] = useState('');
     const [loadingJobId, setLoadingJobId] = useState(null);
     const [loading, setLoading] = useState(true); // New loading state
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedJobId, setSelectedJobId] = useState(null);
 
     const userId = localStorage.getItem("userId");
 
@@ -76,18 +79,24 @@ const DashboardPage = () => {
         setModalMessage('');
     };
 
+    const handleCancel = (jobId) => {
+        setSelectedJobId(jobId);
+        setOpenDialog(true);
+    };
 
 
-    const handleCancel = async (jobId) => {
-        if (window.confirm('Are you sure you want to remove this job?')) {
-            try {
-                const response = await API.delete(`/jobs/${userId}/${jobId}`);
-                if (response.status === 200) {
-                    setJobs(jobs.filter(job => job._id !== jobId)); // Remove job from state
-                }
-            } catch (error) {
-                console.error('Failed to cancel job:', error);
+
+    const confirmCancel  = async (jobId) => {
+        try {
+            const response = await API.delete(`/jobs/${userId}/${selectedJobId}`);
+            if (response.status === 200) {
+                setJobs(jobs.filter(job => job._id !== selectedJobId));
             }
+        } catch (error) {
+            console.error('Failed to cancel job:', error);
+        } finally {
+            setOpenDialog(false);
+            setSelectedJobId(null);
         }
     };
 
@@ -97,14 +106,15 @@ const DashboardPage = () => {
 
     return (
         <>
+        <div className="min-h-screen flex flex-col justify-between">
         <CarNavbar/>
         <Container maxWidth="lg" sx={{
              minHeight: {
-                xs: '80vh', // 60% of the viewport height on mobile
+                xs: '75vh', // 60% of the viewport height on mobile
                 sm: '70vh', // Keep 70vh on small screens and up
               },
          maxHeight: {
-           // xs: '80vh', // For mobile (extra small screens), set maxHeight to 100%
+            xs: '75vh', // For mobile (extra small screens), set maxHeight to 100%
            // sm: '70vh', // For small screens and up, set maxHeight to 80vh
           },
         backgroundColor: {
@@ -125,19 +135,21 @@ const DashboardPage = () => {
           },
     }}>
 
-<Box display="flex" justifyContent="space-between" alignItems="center" mb={2} mt={2}> 
-                <Typography variant="h4" gutterBottom sx={{ color: { xs: 'inherit', lg: '#333' } }}>
-                    Home
-                </Typography>
-                <Button
-                    variant="contained"
-                    className="!bg-orange-500 hover:!bg-orange-600 text-white"
-                    onClick={handlePostNewJob}
-                    sx={{ borderRadius: '15px', padding: '8px 20px' }}
-                >
-                    Post New Job
-                </Button>
-            </Box>
+{jobs.length <= 0 && (
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} mt={2}> 
+        <Typography variant="h4" gutterBottom sx={{ color: { xs: 'inherit', lg: '#333' } }}>
+            
+        </Typography>
+        <Button
+            variant="contained"
+            className="!bg-orange-500 hover:!bg-orange-600 text-white"
+            onClick={handlePostNewJob}
+            sx={{ borderRadius: '15px', padding: '8px 20px' }}
+        >
+            Post a new job
+        </Button>
+    </Box>
+)}
             <Typography
   variant="h4"
   gutterBottom
@@ -170,7 +182,7 @@ const DashboardPage = () => {
                             position: 'absolute',
                             top: 8,
                             left: 8,
-                            backgroundColor: job.status === 'posted' ? '#32a1cb' : '#fc5c39',
+                            backgroundColor: job.status === 'posted' ? '#6698f7' : '#6698f7',
                             color: '#fff',
                             padding: '4px 8px',
                             borderRadius: '5px',
@@ -182,35 +194,12 @@ const DashboardPage = () => {
                     >
                         {job.status}
                               </Typography>
-                              <FaTimes 
-                             style={{
-                                  position: 'absolute',
-                                  top: 8,
-                                  right: 8,
-                                    color: 'red',
-                                    padding: '4px 8px',
-                                    borderRadius: '5px',
-                                    fontWeight: 'normal',
-                                    fontSize: '35px',
-                                    cursor: 'pointer'
-                                }}
-                                onClick={() => handleCancel(job._id)}
-                             />
-
-                                <FaEdit  style={{ 
-                                    fontWeight: 'normal',
-                                    fontSize: '25px',
-                                    cursor: 'pointer',
-                                    color: '#fff',
-                                    margin: '-34px 0px 0px 9px'
-                                }}
-                                onClick={() => handleEdit(job._id)}
-                             />                                         
+                                    
                          </div>
                      )}
                         <Box sx={{ p: 2,  borderRadius: '8px' }}>
 
-                            <Typography variant="h6" sx={{ textAlign: 'center', fontSize:'35px', letterSpacing:'0.065em', fontWeight: '700', color: '#000', mb:2 }}>{job.serviceType}</Typography>
+                            <Typography variant="h6" sx={{ textAlign: 'center', fontSize:'35px',  color: '#000', mb:2 }}><strong>{job.serviceType}</strong></Typography>
                 
                             <Box display="flex" justifyContent="space-between" textAlign="center" gap={2}>
                                 <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px',width: '50%', border:"1px solid #ddd" }}><strong> Start </strong>  <br/> {new Date(job.startDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</Typography>
@@ -219,29 +208,67 @@ const DashboardPage = () => {
                 
                             <Box display="flex" justifyContent="space-between" gap={2} textAlign="center" sx={{ mt: 2 }}>
                                 <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd"  }}><strong> Shift </strong>  <br/> {job.shift}</Typography>
-                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd" }}><strong> Days </strong>  <br/> {(new Date(job.endDate) - new Date(job.startDate)) / (1000 * 60 * 60 * 24)}</Typography>
+                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd" }}><strong> Days </strong>  <br/> {Math.ceil((new Date(job.endDate) - new Date(job.startDate)) / (1000 * 60 * 60 * 24))}</Typography>
                                 <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd"  }}><strong> Pay </strong>  <br/> {job.pay} {job.currency}</Typography>
                             </Box>
 
                             <Box display="flex" justifyContent="space-between" gap={2} textAlign="center" sx={{ mt: 2 }}>
-                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd"  }}>{job?.area}</Typography>
-                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd" }}>{job?.city} </Typography>
-                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd"  }}>{job?.country}</Typography>
+                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd",  display: "flex",
+      alignItems: "center", justifyContent: "center", textAlign: "center"  }}><strong>{job?.country}</strong></Typography>
+                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd",  display: "flex",
+      alignItems: "center", justifyContent: "center", textAlign: "center"  }}><strong>{job?.area}</strong></Typography>
+                                <Typography variant="body2" sx={{  backgroundColor: '#fff', p: 1, borderRadius: '5px', width: '33.33%', border:"1px solid #ddd",  display: "flex",
+      alignItems: "center", justifyContent: "center", textAlign: "center" }}><strong>{job?.city} </strong></Typography>
+                                
                             </Box>
                         </Box>
                     </CardContent>
                     <CardActions style={{ display: 'flex', justifyContent: 'center' }}>  
                          
-                         <Button
-                                size="large"
-                                variant="contained"
-                                className="!bg-orange-500 hover:!bg-orange-600 text-white"
-                                style={{ borderRadius: '15px', padding: '4px 15px' }}
-                                onClick={() => (job.status === 'draft' ? handlePublish(job._id) : handleFindDriver(job._id))}
-                                disabled={loadingJobId === job._id}
-                            >
-                                {loadingJobId === job._id ? <CircularProgress size={24} sx={{ color: '#fff' }} /> : (job.status === 'draft' ? "Publish" : "Find a Driver")}
-                            </Button>
+                    <Button
+  size="large"
+  variant="contained"
+  className="!bg-[#fe8735] hover:!bg-orange-600 text-white flex items-center justify-center"
+  style={{ borderRadius: '15px', padding: '8px 16px' }}
+  onClick={() => handleEdit(job._id)}
+>
+  <FaEdit
+    style={{
+      fontSize: '20px',
+      color: '#fff',
+    }}
+  />
+</Button>
+
+<Button
+  size="large"
+  variant="contained"
+  className="!bg-[#8cc63e] hover:!bg-orange-600 text-white flex items-center justify-center"
+  style={{ borderRadius: '15px', padding: '8px 16px' }}
+  onClick={() => handleCancel(job._id)}
+>
+  <FaTimes
+    style={{
+      fontSize: '20px',
+      color: '#fff',
+    }}
+  />
+</Button>
+
+{job.status === 'draft' && (
+    <Button
+        size="large"
+        variant="contained"
+        className="!bg-[#fe8735] hover:!bg-orange-600 text-white"
+        style={{ borderRadius: '15px', padding: '4px 15px' }}
+        onClick={() => handlePublish(job._id)}
+        disabled={loadingJobId === job._id}
+    >
+        {loadingJobId === job._id
+            ? <CircularProgress size={24} sx={{ color: '#fff' }} />
+            : "Publish"}
+    </Button>
+)}
                         
                     </CardActions>
                 </Card>
@@ -249,9 +276,11 @@ const DashboardPage = () => {
             ))}
             </Box>
             ) : (
-                <Typography variant="h6" sx={{ textAlign: 'center', width: '100%', color: '#555', mt: 4 }}>
-                  No jobs added at the moment.
-                </Typography>
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+                         <Typography variant="h6" sx={{ textAlign: 'center', color: '#555' }}>
+                             No jobs added at the moment.
+                     </Typography>
+                </Box>
               )}
         </Container>
          {/* Modal */}
@@ -264,7 +293,34 @@ const DashboardPage = () => {
                     <Button onClick={handleCloseModal} color="primary">OK</Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+    <DialogTitle>Cancel Job</DialogTitle>
+    <DialogContent>
+        <DialogContentText>
+            Are you sure you want to cancel this job?
+        </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+  
+        <Button
+   onClick={() => setOpenDialog(false)}
+  variant="contained"
+  sx={{ backgroundColor: '#fe8735', '&:hover': { backgroundColor: '#fe8735' } }}
+>
+  No
+</Button>
+        <Button
+  onClick={confirmCancel}
+  variant="contained"
+  sx={{ backgroundColor: '#8cc63e', '&:hover': { backgroundColor: '#77b834' } }}
+>
+  Yes, Cancel
+</Button>
+    </DialogActions>
+</Dialog>
         <Footer/>
+        </div>
         </>
     );
 };

@@ -92,7 +92,7 @@ const AvailableJobs = () => {
           <p>Are you sure you want to reject this job offer?</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="primary">
+          <Button onClick={onClose} variant="contained" sx={{ backgroundColor: '#fe8735', '&:hover': { backgroundColor: '#fe8735' } }}>
             Cancel
           </Button>
           <Button
@@ -100,7 +100,8 @@ const AvailableJobs = () => {
               onReject(offer);
               onClose();
             }}
-            color="secondary"
+            variant="contained"
+            sx={{ backgroundColor: '#8cc63e', '&:hover': { backgroundColor: '#77b834' } }}
           >
             Reject
           </Button>
@@ -133,7 +134,7 @@ const AvailableJobs = () => {
         <Box  sx={{
              display: 'flex',
             justifyContent: 'center',
-            width: '100%'
+            width: '100%',
         }}
       >
        <Typography variant="h6" align="center" color="textSecondary">
@@ -146,15 +147,16 @@ const AvailableJobs = () => {
     return offers.map((offer) => (
       <Box key={offer._id} sx={{ boxShadow: 3, borderRadius: 2, p: 2, mb: 3, backgroundColor: '#f9f9f9' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ color: 'orange', fontWeight: 'bold' }}>{offer.jobId?.serviceType}</Typography>
-           <Typography variant="body1">{offer.jobId?.pay} {offer.jobId?.currency} {offer.jobId?.shift}</Typography>
+          <Typography variant="h6" sx={{ color: 'orange' }}><strong>{offer.jobId?.serviceType}</strong></Typography>
+           <Typography variant="h6"><strong>{offer.jobId?.pay} {offer.jobId?.currency}</strong></Typography>
           <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => handleOpenDialog(offer)}>✕</Typography>
         </Box>
 
+        
+          
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{offer.jobId?.area}</Typography>
-          <Typography variant="body1" sx={{ fontWeight: 'bold', ml: 2 }}>{offer.jobId?.city}</Typography>
-          <Typography variant="body1" sx={{ ml: 2 }}>{offer.jobId?.country}</Typography>
+                 
+                  <Typography variant="h6"><strong>{offer.jobId?.user?.modelYear}</strong></Typography>
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -164,7 +166,13 @@ const AvailableJobs = () => {
         </Typography>
         <Typography variant="body2" color="textSecondary">From {new Date(offer.jobId?.startDate).toLocaleDateString('en-GB')}</Typography>
         <Typography variant="body2" color="textSecondary">To {new Date(offer.jobId?.endDate).toLocaleDateString('en-GB')}</Typography>
-        <Typography variant="body2" color="textSecondary">{offer.jobId?.pay} {offer.jobId?.currency} </Typography>
+       
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+        <Typography variant="body1" color="textSecondary"><strong>{offer.jobId?.country}</strong></Typography>
+        <Typography variant="body1" sx={{  ml: 2 }} color="textSecondary"><strong>{offer.jobId?.area}</strong></Typography>
+        <Typography variant="body1" sx={{  ml: 2 }} color="textSecondary"><strong>{offer.jobId?.city}</strong></Typography>
+        </Box>
+
         </Box>
         <Box sx={{ display: 'block', justifyContent: 'center', mt: 2 }}>
           <Avatar src={offer.jobId?.user?.profileImage ? `${IMAGE_API}${offer.jobId?.user?.profileImage}` : IMAGE_API} alt="Car Image" sx={{ width: 56, height: 56 }} />
@@ -181,7 +189,7 @@ const AvailableJobs = () => {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
         <Button variant="outlined" onClick={() => handleOpenModal(offer)}>Modify</Button>
-          <Link to={`/job/${offer.jobId?._id}`} style={{ textDecoration: 'none' }}>
+          <Link to={`/view-profile/${offer.jobId?.user?._id}`} style={{ textDecoration: 'none' }}>
             <Button variant="contained">Details</Button>
           </Link>
         </Box>
@@ -199,13 +207,14 @@ const AvailableJobs = () => {
               display: 'flex',
              justifyContent: 'center',
              alignItems: 'center',
-             width: '100%'
+             width: '100%',
+            minHeight: "65vh"
          }}
        >
             <Typography
             align="center"
             sx={{
-              color: { xs: 'textSecondary', md: 'white' } // White on desktop, textSecondary on mobile
+              color: { xs: 'textSecondary', md: '#000' } // White on desktop, textSecondary on mobile
             }}
           >{errorMessage}</Typography>
            </Box>

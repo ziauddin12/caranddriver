@@ -89,6 +89,10 @@ h2 {
   
 }
 
+body.page-view-profile{
+  overflow-y: auto;
+}
+
 .page-dashboard {
   overflow: auto;
 }

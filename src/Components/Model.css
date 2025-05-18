@@ -102,13 +102,37 @@
     
   }
 
-  .page-job{
+  .deselect {
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden; /* Hides overflowing content */
+    text-overflow: ellipsis; /* Shows '...' when text overflows */
+  }
+
+  .page-job, .page-myaccount{
     background-color: #fff;
   }
 
   @media (max-width: 678px) {
-  .page-carowner-notifiction, .page-job,  .page-notification, .page-myaccount, .page-driver-profile {
+  .page-carowner-notifiction,  .page-carowner-profile, .page-notification, .page-myaccount, .page-driver-profile, .page-profile-details {
     background-color: #fff;
     height: 100vh;
   }
+
+  .page-job{
+    min-height: 100vh;
+  }
+
+  .page-post-new-job, .page-edit-job{
+    background-color: #fff;
+  }
+
+  .page-dashboard{
+    min-height: 100vh;
+  }
+  html{
+    background-color: #fff;
+  }
+
+  
 }
+ 

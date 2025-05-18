@@ -43,6 +43,9 @@ const CarEditForm = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
 
+  const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
+
   const [userData, setUserData] = useState({ 
     firstName: "",
     lastName: "",
@@ -65,6 +68,65 @@ const CarEditForm = () => {
     confirmPassword: "",
     profileImage:"",
   });
+
+   useEffect(() => {
+              // Fetch cities when country changes
+              if (userData?.country) {
+                  fetchStates(userData?.country);
+                  if(userData?.area){
+                      fetchCities(userData?.country, userData?.area);
+                  }
+                  
+              }
+          }, [userData?.country, userData?.area]);
+    
+         const fetchCities = async (countryCode, area) => {
+                if( countryCode === 'Spain'){
+                    countryCode = 'ES';
+                } else if( countryCode === 'France' ){
+                    countryCode = 'FR';
+                } else if( countryCode === 'Germany' ){
+                    countryCode = 'DE';
+                } else if( countryCode === 'Egypt' ){
+                    countryCode = 'EG';
+                }
+        
+                try {
+                    const response = await API.get(`/users/city/${countryCode}/${area}`);
+                    if (response.data && response.data.geonames) {
+                        setCities(response.data.geonames.map(city => city.name));
+                    }
+                } catch (error) {
+                    console.error('Error fetching cities:', error);
+                }
+            };
+        
+        
+            const fetchStates = async (countryCode) => {
+                // Use a mapping object for better scalability and readability
+                const countryMapping = {
+                    'Spain': 'ES',
+                    'France': 'FR',
+                    'Germany': 'DE', // Corrected country code for Germany
+                    'Egypt': 'EG'
+                };
+            
+                // Default to the provided countryCode if it's not mapped
+                const mappedCountryCode = countryMapping[countryCode] || countryCode;
+            
+                try {
+                    const response = await API.get(`/users/state/${mappedCountryCode}`);
+                    
+                    if (response.data && response.data.geonames) {
+                        // Update states only if data is valid
+                        setStates(response.data.geonames.map(state => state.adminName1));
+                    } else {
+                        console.error('No geonames data found in response');
+                    }
+                } catch (error) {
+                    console.error('Error fetching states:', error);
+                }
+            };
 
   useEffect(() => {
     // Simulate API call to fetch user data
@@ -265,15 +327,16 @@ const CustomInput = ({ value, onClick }) => (
 
   return (
     <>
+    <div className="min-h-screen flex flex-col justify-between">
     <CarNavbar/>
-      <div className=" bg-[#FFFFFF] p-5">
+      
         <Container maxWidth="lg" sx={{
                      minHeight: {
                         xs: '60vh', // 60% of the viewport height on mobile
                         sm: '60vh', // Keep 70vh on small screens and up
                       },
                  maxHeight: {
-                    xs: '74vh', // For mobile (extra small screens), set maxHeight to 100%
+                    xs: '80vh', // For mobile (extra small screens), set maxHeight to 100%
                     sm: '100%', // For small screens and up, set maxHeight to 80vh
                   },
                 backgroundColor: {
@@ -293,7 +356,8 @@ const CustomInput = ({ value, onClick }) => (
                     sm: '0', // For small screens and up, no bottom padding
                   },
             }}>
-        <div className="  shadow-md max-w-6xl mx-auto mt-8 border-[1px] lg:border-2  border-[#000000] text-[#000000] ">
+              <div className=" bg-[#FFFFFF] lg:p-5">
+        <div className="  shadow-md max-w-6xl mx-auto lg:mt-8 border-[1px] lg:border-2  border-[#000000] text-[#000000] ">
           <div className=" pb-4 mt-5 mb-2 lg:mb-20  ">
              <UserProfile userData={userData} setUserData={setUserData} />
           </div>
@@ -326,7 +390,7 @@ const CustomInput = ({ value, onClick }) => (
                       <td className="px-4 py-2 font-thin lg:font-semibold text-lg text-[#000000]">
                          {t("dateOfBirth")}
                       </td>
-                      <td className="border-l-2 px-4 border-[#000000]">
+                      <td className="border-l-2 px-0 border-[#000000]">
                         
                            <DatePicker
                               selected={selectedDate}
@@ -697,43 +761,9 @@ const CustomInput = ({ value, onClick }) => (
                       />
                     </div>
                     <div className="flex justify-between items-center ">
-                      <label className="block  font-medium text-base  sm:text-lg ">
-                      {t("area")}
-                      </label>
-                      <input
-                        type="text"
-                        name="area"
-                        value={userData?.area}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (/^[A-Za-z]*$/.test(value)) {
-                            handleInputChange(e);
-                          }
-                        }}
-                        className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
-                      />
-                    </div>
-                    <div className="flex justify-between items-center ">
-                    <label className="block w-[40%] lg:w-[30%] font-medium text-base  sm:text-lg ">
-                      {t("city")}
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={userData?.city}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (/^[A-Za-z]*$/.test(value)) {
-                            handleInputChange(e);
-                          }
-                        }}
-                        className="w-[60%]  sm:w-[70%]  border-[1px] lg:border-2 p-1.5  bg-transparent  outline-none  border-[#000000]"
-                      />
-                    </div>
-                    <div className="flex justify-between items-center ">
                       <label className="block text-base  sm:text-lg font-medium">
                       {t("country")}
-                      </label>
+                      </label> 
                       <select
   className="w-[60%] sm:w-[70%] border-[1px] lg:border-2 p-1.5 bg-transparent outline-none border-[#000000]"
   id="country"
@@ -747,11 +777,82 @@ const CustomInput = ({ value, onClick }) => (
   <option value="France">France</option>
   <option value="Germany">Germany</option>
   <option value="Egypt">Egypt</option>
+  
   </select>
+                    </div>
+
+                    <div className="flex justify-between items-center ">
+                      <label className="block  font-medium text-base  sm:text-lg ">
+                      State
+                      </label>
+                     {/* <input
+                        type="text"
+                        name="area"
+                        value={userData?.area}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
+                        className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
+                      /> */}
+
+<select
+  className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2 deselect  p-1.5  bg-transparent  outline-none border-[#000000] truncate"
+  id="area"
+  name="area"
+  value={userData?.area || ""} // Ensure a fallback value
+  onChange={(e) => setUserData((prev) => ({ ...prev, area: e.target.value }))} // Update state
+ 
+>
+  <option value="">Select State</option> {/* Placeholder option */}
+  {states.map((state, index) => (
+    <option key={index} value={state}>
+       {state.length > 12 ? `${state.slice(0, 12)}...` : state}
+    </option>
+  ))}
+</select>
+
+                    </div>
+                    <div className="flex justify-between items-center ">
+                      <label className="block w-[40%] lg:w-[30%] font-medium text-base  sm:text-lg ">
+                      {t("city")}
+                      </label>
+                     {/* <input
+                        type="text"
+                        name="city"
+                        value={userData?.city}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[A-Za-z]*$/.test(value)) {
+                            handleInputChange(e);
+                          }
+                        }}
+                        className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2   p-1.5  bg-transparent  outline-none border-[#000000] "
+                      /> */}
+
+<select
+  className="w-[60%]  sm:w-[70%] border-[1px] lg:border-2 deselect  p-1.5  bg-transparent  outline-none border-[#000000] truncate"
+  id="city"
+  name="city"
+  value={userData?.city || ""} // Ensure a fallback value
+  onChange={(e) => setUserData((prev) => ({ ...prev, city: e.target.value }))} // Update state
+ 
+>
+  <option value="">Select City</option> {/* Placeholder option */}
+  {cities.map((city, index) => (
+    <option key={index} value={city}>
+       {city.length > 12 ? `${city.slice(0, 12)}...` : city}
+    </option>
+  ))}
+</select>
+
+                       
                     </div>
                   </div>
                   <div className="mt-6 text-center border-t  border-[#000000]  ">
-                    <button className="bg-orange-500 text-black py-2  lg:w-auto  px-16  shadow-md hover:bg-orange-600 mt-3 mb-3 lg:mb-2 border border-[#000000] text-lg "
+                    <button className="bg-[#fe8735] text-black py-2  lg:w-auto  px-16  shadow-md hover:bg-orange-600 mt-3 mb-3 lg:mb-2 border border-[#000000] text-lg "
                     onClick={handleSubmit}>
                       {t("save")}
                     </button>
@@ -784,9 +885,11 @@ const CustomInput = ({ value, onClick }) => (
         </div>
       )}
        
+       </div>
        </Container>
-      </div>
+      
       <Footer/>
+      </div>
     </>
   );
 };

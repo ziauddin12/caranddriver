@@ -75,9 +75,9 @@ const NotificationCarOwner = () => {
     const handleReject = async (offer) => {
       console.log(offer);
       try {
-        const response = await API.put(`/proposals/status/${offer?.userId?._id}/${offer.jobId?._id}`);
+        const response = await API.put(`/proposals/status/${offer?.userId?._id}/${offer?.jobId?._id}`);
         if (response.status === 200) {
-          setOffers(offers.filter((item) => item.jobId?._id !== offer.jobId?._id));
+          setOffers(offers.filter((item) => item?._id !== offer?._id));
         }
       } catch (error) {
         console.error('Failed to reject job:', error);
@@ -92,7 +92,8 @@ const NotificationCarOwner = () => {
             <p>Are you sure you want to reject this job offer?</p>
           </DialogContent>
           <DialogActions>
-            <Button onClick={onClose} color="primary">
+            <Button onClick={onClose} variant="contained"
+  sx={{ backgroundColor: '#fe8735', '&:hover': { backgroundColor: '#fe8735' } }}>
               Cancel
             </Button>
             <Button
@@ -100,7 +101,8 @@ const NotificationCarOwner = () => {
                 onReject(offer);
                 onClose();
               }}
-              color="secondary"
+              variant="contained"
+              sx={{ backgroundColor: '#8cc63e', '&:hover': { backgroundColor: '#77b834' } }}
             >
               Reject
             </Button>
@@ -124,8 +126,8 @@ const NotificationCarOwner = () => {
     return offers.map((offer) => (
       <Box key={offer._id} sx={{ boxShadow: 3, borderRadius: 2, p: 2, mb: 3, backgroundColor: '#f9f9f9' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ color: 'orange', fontWeight: 'bold' }}>{offer.userId?.serviceType[0]}</Typography>
-          <Typography variant="body1">{offer.userId?.experience} years</Typography>
+          <Typography variant="h6" sx={{ color: '#333',  fontSize:"30px" }}><strong>{offer.userId?.serviceType[0]}</strong></Typography>
+          <Typography variant="body1" sx={{ color: '#333',  fontSize:"30px" }}><strong> {offer?.pay} {offer?.jobId?.currency ?? "EGP"} </strong></Typography> 
           <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => handleOpenDialog(offer)}>✕</Typography>
         </Box>
 
@@ -134,7 +136,7 @@ const NotificationCarOwner = () => {
           <Typography variant="body1" sx={{ fontWeight: '500', ml: 2 }}>MALE</Typography>
           <Typography variant="body1" sx={{ ml: 2 }}>
                 {offer.userId?.dateOfBirth
-                     ? `${new Date().getFullYear() - new Date(offer.userId.dateOfBirth).getFullYear()} years`
+                     ? `${new Date().getFullYear() - new Date(offer.userId.dateOfBirth).getFullYear()} years old`
              : 'N/A'}
             </Typography>
         </Box>
@@ -148,6 +150,14 @@ const NotificationCarOwner = () => {
         <Typography variant="body2" color="textSecondary" sx={{ mt: 0, p: 0, fontWeight: '500',  color:'#000' }}>
              <Checkbox sx={{  p: 0, color:'#000' }} checked={!!offer.userId?.uploadDrugTest} disabled /> Drug Tested
         </Typography>
+
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 0, p: 0, fontWeight: '500',  color:'#000' }}>
+             <Checkbox sx={{  p: 0, color:'#000' }} checked={!!offer.userId?.ID} disabled /> ID
+        </Typography>
+
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 0, p: 0, fontWeight: '500',  color:'#000' }}>
+             <Checkbox sx={{  p: 0, color:'#000' }} checked={!!offer.userId?.License} disabled /> Liscence
+        </Typography>
          
         </Box>
         <Box sx={{ display: 'block', justifyContent: 'center', mt: 2 }}>
@@ -157,17 +167,12 @@ const NotificationCarOwner = () => {
             <CiStar />
           ))}
         </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1 }}>
+          <Typography variant="body1">{offer.userId?.experience} y </Typography>
+        </Box>
         </Box>
  
         </Box>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ color: 'back', fontWeight: '500' }}>{offer.jobId?.jobTitle}</Typography>
-          <Typography variant="body1"> {offer?.pay} EGP </Typography> 
-        </Box>
-
-       
-        
 
         <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
         <Button variant="outlined" onClick={() => handleOpenModal(offer)}>Accept</Button>
@@ -181,13 +186,17 @@ const NotificationCarOwner = () => {
 
   return (
     <>
+    <div className="min-h-screen flex flex-col justify-between">
       <CarNavbar />
       <Container maxWidth="lg" sx={{
         minHeight: {
           xs: '60vh', // 60% of the viewport height on mobile
           sm: '70vh', // Keep 70vh on small screens and up
         },
-        maxHeight: '80vh',
+        maxHeight: {
+          xs: '75vh', // For mobile (extra small screens), set maxHeight to 100%
+         // sm: '70vh', // For small screens and up, set maxHeight to 80vh
+        }, 
         overflowY: 'scroll',
         '&:hover': { overflowY: 'scroll' },
         '&::-webkit-scrollbar': { display: 'none' },
@@ -195,10 +204,7 @@ const NotificationCarOwner = () => {
         backgroundColor: {
           xs: '#fff', // For mobile, set paddingBottom to 20px
           sm: 'transparent', // For small screens and up, no bottom padding 
-        },
-        '@media (max-width: 600px)': {
-          height: '100vh',
-        },
+        }
       }}>
         <Box sx={{ padding: 2 }}>
           {loading && <Typography align="center">Loading...</Typography>}
@@ -252,7 +258,7 @@ const NotificationCarOwner = () => {
       />
       
       <Footer/>
-       
+      </div>  
     </>
   );
 };

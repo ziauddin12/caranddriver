@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 
 //import fromicon from "../assets/formicon.png";
 
-import Footer from "./Footer"; 
-
-import { Container} from '@mui/material';
+import { GoHome } from "react-icons/go";
+import { TfiEmail } from "react-icons/tfi";
+import { GoBell } from "react-icons/go";
+import { TfiWallet } from "react-icons/tfi";
 
 import cloudcomputing from "../assets/cloudcomputing.png";
 import { CiStar } from "react-icons/ci";
 
-//import { IoCarSportOutline } from "react-icons/io5";
+import { Container } from '@mui/material';
+
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from "@mui/icons-material/Cancel";
+
+import { IoCarSportOutline } from "react-icons/io5";
 //import car from "../assets/car.webp";
-//import Navbar from "./Navbar";
-import CarNavbar from "./CarNavbar";
+//import Navbar from "./Navbar"; 
 
 import API from '../Components/services/api';
 import IMAGE_API from '../Components/services/ImgBase';
@@ -20,7 +25,10 @@ import UserProfile from '../Components/UserProfile';
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const CarProfile = () => {
+import DriverNavbar from "./DriverNavbar";
+import DriverFooter from "./DriverFooter";
+
+const CarViewProfile = () => {
   const { profileId } = useParams();
   const { t, i18n } = useTranslation(); // Hook for translation
  
@@ -58,7 +66,7 @@ const CarProfile = () => {
         const userId = profileId; 
     
         // Using template literals for string interpolation
-        const response = await API.get(`/users/${userId}`); 
+        const response = await API.get(`/users/view-car/${userId}`); 
         setUserData(response.data); // Adjust based on how your `API` service formats responses
 
         
@@ -97,35 +105,36 @@ const publicView = false;
   return (
     <>
     <div className="min-h-screen flex flex-col justify-between">
-    <CarNavbar/>
+    <DriverNavbar/>
     <Container maxWidth="lg" sx={{
-                                                 minHeight: {
-                                                    xs: '60vh', // 60% of the viewport height on mobile
-                                                    sm: '60vh', // Keep 70vh on small screens and up
-                                                  },
-                                             maxHeight: {
-                                                xs: '80vh', // For mobile (extra small screens), set maxHeight to 100%
-                                                sm: '100%', // For small screens and up, set maxHeight to 80vh
-                                              },
-                                            backgroundColor: {
-                                                xs: '#fff', // For mobile, set background color to white
-                                                sm: 'transparent', // For small screens and up, use transparent (or any other color you prefer)
-                                              },
-                                            overflowY: 'scroll',
-                                            '&:hover': {
-                                              overflowY: 'scroll',
-                                            },
-                                            '&::-webkit-scrollbar': {
-                                              display: 'none',
-                                            },
-                                            scrollbarWidth: 'none',
-                                            paddingBottom: {
-                                                xs: '20px', // For mobile, set paddingBottom to 20px
-                                                sm: '0', // For small screens and up, no bottom padding
-                                              },
-                                        }}>
-      <div className=" bg-[#FFFFFF] p-5">
-        <div className="  shadow-md max-w-6xl mx-auto mt-8 border-[1px] lg:border-2  border-[#000000] text-[#000000] ">
+                     minHeight: {
+                        xs: '60vh', // 60% of the viewport height on mobile
+                        sm: '60vh', // Keep 70vh on small screens and up
+                      },
+                 maxHeight: {
+                    xs: '75vh', // For mobile (extra small screens), set maxHeight to 100%
+                    sm: '100%', // For small screens and up, set maxHeight to 80vh
+                  },
+                backgroundColor: {
+                    xs: '#fff', // For mobile, set background color to white
+                    sm: 'transparent', // For small screens and up, use transparent (or any other color you prefer)
+                  },
+                overflowY: 'scroll',
+                '&:hover': {
+                  overflowY: 'scroll',
+                },
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                },
+                scrollbarWidth: 'none',
+                paddingBottom: {
+                    xs: '20px', // For mobile, set paddingBottom to 20px
+                    sm: '0', // For small screens and up, no bottom padding
+                  },
+            }}>
+      <div className=" bg-[#FFFFFF] lg:p-5">
+
+        <div className="  shadow-md max-w-6xl mx-auto lg:mt-8 border-[1px] lg:border-2  border-[#000000] text-[#000000] ">
           <div className=" pb-4 mt-5 mb-2 lg:mb-20  ">
              <UserProfile userData={userData} setUserData={setUserData} PublicView={publicView} />
           </div>
@@ -174,34 +183,34 @@ const publicView = false;
                   {t("vehicleDetails")}
                   </h2>
                   <div className="grid grid-cols-1 gap-4 font-medium pl-4 pr-3">
-                    <div className="flex items-center gap-4">
-                      <p className="w-[53%] lg:w-1/3 flex-shrink-0 ">{t("makeModelYear")}</p>
-                      <span>{userData?.modelYear}</span>
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full lg:w-1/3 flex-shrink-0 ">{t("makeModelYear")}</p>
+                      <p className="flex-shrink-0 ">{userData?.modelYear}</p>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <p className="w-[79%] lg:w-1/3">{t("vehicleType")}</p>
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full lg:w-1/3">{t("vehicleType")}</p>
                       <span>{userData?.vehicleType || ""}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="w-[50%] lg:w-1/3">{t("transmission")}</p>
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full lg:w-1/3">{t("transmission")}</p>
                       <span>{userData?.transmission || ""}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="w-[79%] lg:w-1/3">{t("airCondition")}</p>
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full] lg:w-1/3">{t("airCondition")}</p>
                       <span>{userData?.airCondition || ""}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="w-[79%] lg:w-1/3">{t("insurance")}</p> 
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full lg:w-1/3">{t("insurance")}</p> 
                       <span>{userData?.insurance || ""}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="w-[79%] lg:w-1/3"> {t("fuel")}</p>
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full lg:w-1/3"> {t("fuel")}</p>
                        
                       <span>{userData?.fuel || ""}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <p className="w-[79%] lg:w-1/3">{t("color")}</p>
+                    <div className="lg:flex items-center gap-4 lg:justify-between">
+                      <p className="w-full lg:w-1/3">{t("color")}</p>
                       <span>{userData?.color}</span>
                     </div>
                   </div>
@@ -209,35 +218,52 @@ const publicView = false;
 
                 <div className="col-span-2 w-full mt-1">
                   <h2 className="mb-4 border-y border-t-[1px] lg:border-t-2 uppercase border-[#000000] text-xl font-bold py-2 text-center w-full flex justify-center gap-2">
-                    <span className="text-3xl">
-                      <img src={cloudcomputing} alt="" className="w-8" />
-                    </span>
-                    <span>{t("uploads")}</span>
+                    
+                    <span>Document</span>
                   </h2>
                   <div className="flex justify-evenly items-center text-black text-xs mb-3">
-                    {/* ID Upload Button */}
-                    <div className="relative">
-                      {/* Hidden File Input */}
-                      <img src={`${IMAGE_API}${userData?.uploadID}`} className=" max-h-20" alt=""></img>
-                      {/* Visible Button */}
-                      <a href={`${IMAGE_API}${userData?.uploadID}`} alt="">{t("uploadID")}</a>
-                       
-                    </div>
+                    {/* ID Upload Button */} 
+                      <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.uploadID ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">ID</span>
+</div>
 
                     {/* Vehicle License Upload Button */}
-                    <div className="relative">
-                    <img src={`${IMAGE_API}${userData?.uploadLicense}`} className=" max-h-20" alt=""></img>
-                    <a href={`${IMAGE_API}${userData?.uploadLicense}`} alt="">{t("uploadLicense")}</a>
-                     
-                    </div>
+                   
 
-                    {/* Car Owner Upload Button */}
-                    <div className="relative">
-                    <img src={`${IMAGE_API}${userData?.carowner}`} className=" max-h-20" alt=""></img>
-                       <a href={`${IMAGE_API}${userData?.carowner}`} alt=""> {t("carOwner")}</a>
-                      
-                       
-                    </div>
+                    <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.uploadLicense ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">{t("uploadLicense")}</span>
+</div>
+
+                    {/* Car Owner Upload Button */} 
+
+                    <div className="flex flex-col justify-center items-center text-center">
+  {/* Hidden File Input */}
+  {userData?.carowner ? (
+    <CheckCircleIcon sx={{ fontSize: 50, color: "orange" }} />
+  ) : (
+    <CancelIcon sx={{ fontSize: 50, color: "red" }} />
+  )}
+  
+  {/* Text Below Icon */}
+  <span className="mt-1 font-bold text-[15px]">{t("carOwner")}</span>
+</div>
+
                   </div>
                 </div>
               </div>
@@ -246,11 +272,11 @@ const publicView = false;
             <div className="flex flex-col justify-end  lg:relative   ">
               <div>
                 <div className="">
-                  <div className=" bg-white border border-black rounded-lg   pb-6 lg:w-[34.5rem] lg:h-[32.4rem] flex justify-center items-center   lg:absolute lg:top-[0rem] lg:right-0 ">
+                  <div className=" bg-white border border-black rounded-lg   pb-6 lg:w-[34.5rem] lg:h-[22.4rem] flex justify-center items-center   lg:absolute lg:top-[0rem] lg:right-0 ">
                     <img
                       src={previewImage}
                       alt=""
-                      className="  object-cover  w-[26rem]  h-[26rem] "
+                      className="  object-cover  w-[26rem]  h-[18rem] "
                     />
                   </div>
                   <span className="text-3xl bg-white lg:bg-transparent  flex justify-end lg:inline-block   ">
@@ -288,20 +314,20 @@ const publicView = false;
                     <div className="flex justify-between items-center ">
                       <label className="block  font-medium text-base  sm:text-lg ">
                       {t("area")}
-                      </label>
-                      <p>{userData?.area}</p>
+                      </label> 
+                      <p>{userData?.area || "xxxx"}</p>
                     </div>
                     <div className="flex justify-between items-center ">
                       <label className="block text-base  sm:text-lg font-medium  ">
                       {t("city")}
-                      </label>
-                      <p>{userData?.city}</p>
+                      </label> 
+                      <p>{userData?.city || "xxxx"}</p>
                     </div>
                     <div className="flex justify-between items-center ">
                       <label className="block text-base  sm:text-lg font-medium">
                       {t("country")}
                       </label>
-                      <p>{userData?.country || ""}</p>
+                      <p>{userData?.country || "xxxx"}</p>
                     </div>
                   </div>
                   <div className="mt-6 text-center border-t  border-[#000000]  ">
@@ -312,14 +338,18 @@ const publicView = false;
             </div>
           </div>
         </div>
-        
+
+     
+       
         </div>
-      {/* Footer Section */}
-      </Container>
-      <Footer/>
-      </div>
+        </Container>
+      
+
+ {/* Footer Section */}
+       <DriverFooter stepstle=""/>
+       </div>
     </>
   );
 };
 
-export default CarProfile;
+export default CarViewProfile;

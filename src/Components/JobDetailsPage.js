@@ -55,11 +55,11 @@ const JobDetailsPage = () => {
             <DriverNavbar />
             <Container maxWidth="lg" sx={{
                  minHeight: {
-                    xs: '80vh', // 60% of the viewport height on mobile
+                    xs: '70vh', // 60% of the viewport height on mobile
                     sm: '80vh', // Keep 70vh on small screens and up
                   },
                 maxHeight: {
-                   // xs: '100%', // For mobile (extra small screens), set maxHeight to 100%
+                    xs: '85vh', // For mobile (extra small screens), set maxHeight to 100%
                    // sm: '80vh', // For small screens and up, set maxHeight to 80vh
                 },
                 backgroundColor: {

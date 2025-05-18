@@ -1,51 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography, Button, Avatar, Modal, TextField, IconButton,
+import {  Box, Typography, Button, Avatar, Modal, TextField, IconButton,
   Dialog, DialogActions, DialogContent, DialogTitle,
  } from '@mui/material';
 import API from '../Components/services/api';  // Assuming you have an API service to handle requests
-import { Link } from 'react-router-dom';  // If you want to link to detailed job offer pages
-import DriverNavbar from "./DriverNavbar";
+import { Link } from 'react-router-dom';  // If you want to link to detailed job offer pages 
 import IMAGE_API from '../Components/services/ImgBase';
 import { CiStar } from "react-icons/ci";
-import { Close } from '@mui/icons-material';
-import DriverFooter from "./DriverFooter";
-import { useNavigate } from 'react-router-dom';
+import { Close } from '@mui/icons-material'; 
 
 
 
-const NotificationPage = () => {
-  const navigate = useNavigate(); // Get navigate function
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const checkUserProfile = async () => {
-        try {
-            const userId = localStorage.getItem("userId");
-            if (!userId) {
-                navigate("/login"); // Redirect if user is not logged in
-                return;
-            }
-
-            const response = await API.get(`/users/${userId}`);
-            const profileData = response.data;
-
-            // Define required fields
-            const requiredFields = ["experience", "dateOfBirth", "licenseNumber", "city", "uploadID", "uploadLicense"]; // Adjust as needed
-            const missingFields = requiredFields.filter(field => !profileData[field]);
-
-            if (missingFields.length > 0) {
-                navigate("/driver-profile"); // Redirect to profile edit page if any field is empty
-            } else {
-                setIsLoading(false); // Allow form to render if profile is complete
-            }
-        } catch (error) {
-            console.error("Error fetching profile:", error);
-            navigate("/driver-profile"); // Redirect on error
-        }
-    };
-
-    checkUserProfile();
-}, [navigate]);
-
+const PendingJobs = () => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); // Added state for error message
@@ -65,7 +30,7 @@ const NotificationPage = () => {
       setLoading(true);
       setErrorMessage('');
       try {
-        const response = await API.get(`/offers/get/${userId}`);
+        const response = await API.get(`/offers/pending/${userId}`);
 
         if (response.data.message) {
           setErrorMessage(response.data.message);
@@ -75,7 +40,7 @@ const NotificationPage = () => {
         }
       } catch (error) {
        // console.error('Error fetching job offers:', error);
-        setErrorMessage('Oops! It looks like there are no offers available for you right now. Please check back later.');
+        setErrorMessage('Oops! No pending offers.');
         setOffers([]);
       } finally {
         setLoading(false);
@@ -169,9 +134,7 @@ const NotificationPage = () => {
         <Box  sx={{
              display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
-            height: '90vh',  // Full viewport height
-            width: '100%'
+            width: '100%',
         }}
       >
        <Typography variant="h6" align="center" color="textSecondary">
@@ -185,15 +148,16 @@ const NotificationPage = () => {
       <Box key={offer._id} sx={{ boxShadow: 3, borderRadius: 2, p: 2, mb: 3, backgroundColor: '#f9f9f9' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6" sx={{ color: 'orange' }}><strong>{offer.jobId?.serviceType}</strong></Typography>
-          <Typography variant="h6"><strong>{offer.jobId?.pay} {offer.jobId?.currency}</strong></Typography>
+           <Typography variant="h6"><strong>{offer.jobId?.pay} {offer.jobId?.currency}</strong></Typography>
           <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => handleOpenDialog(offer)}>✕</Typography>
         </Box>
 
+          
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                 
-            <Typography variant="h6"><strong>{offer.jobId?.user?.modelYear}</strong></Typography>
-         </Box>
          
+          <Typography variant="h6"><strong>{offer.jobId?.user?.modelYear}</strong></Typography>
+        </Box>
+
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'block', justifyContent: 'center', mt: 2 }}>
         <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
@@ -201,15 +165,12 @@ const NotificationPage = () => {
         </Typography>
         <Typography variant="body2" color="textSecondary">From {new Date(offer.jobId?.startDate).toLocaleDateString('en-GB')}</Typography>
         <Typography variant="body2" color="textSecondary">To {new Date(offer.jobId?.endDate).toLocaleDateString('en-GB')}</Typography>
-        
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-              <Typography variant="body1" color="textSecondary"><strong>{offer.jobId?.country}</strong></Typography>
-              <Typography variant="body1" sx={{  ml: 2 }} color="textSecondary"><strong>{offer.jobId?.area}</strong></Typography>
-              <Typography variant="body1" sx={{  ml: 2 }} color="textSecondary"><strong>{offer.jobId?.city}</strong></Typography>
-                        
+          <Typography variant="body1" color="textSecondary"><strong>{offer.jobId?.country}</strong></Typography>
+          <Typography variant="body1" sx={{  ml: 2 }} color="textSecondary"><strong>{offer.jobId?.area}</strong></Typography>
+          <Typography variant="body1" sx={{  ml: 2 }} color="textSecondary"><strong>{offer.jobId?.city}</strong></Typography>
         </Box>
         </Box>
-        
         <Box sx={{ display: 'block', justifyContent: 'center', mt: 2 }}>
           <Avatar src={offer.jobId?.user?.profileImage ? `${IMAGE_API}${offer.jobId?.user?.profileImage}` : IMAGE_API} alt="Car Image" sx={{ width: 56, height: 56 }} />
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
@@ -223,8 +184,7 @@ const NotificationPage = () => {
        
         
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
-        <Button variant="outlined" onClick={() => handleOpenModal(offer)}>Modify</Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}> 
           <Link to={`/view-profile/${offer.jobId?.user?._id}`} style={{ textDecoration: 'none' }}>
             <Button variant="contained">Details</Button>
           </Link>
@@ -234,30 +194,8 @@ const NotificationPage = () => {
   };
 
   return (
-    <>
-    <div className="min-h-screen flex flex-col justify-between">
-      <DriverNavbar />
-      <Container maxWidth="lg" sx={{
-        minHeight: {
-          xs: '78vh', // 60% of the viewport height on mobile
-          sm: '70vh', // Keep 70vh on small screens and up
-        },
-        maxHeight: {
-          xs: '78vh', // For mobile (extra small screens), set maxHeight to 100%
-          sm: '70vh', // For small screens and up, set maxHeight to 80vh
-        },
-        overflowY: 'scroll',
-        '&:hover': { overflowY: 'scroll' },
-        '&::-webkit-scrollbar': { display: 'none' },
-        scrollbarWidth: 'none',
-        backgroundColor: {
-          xs: '#fff', // For mobile, set paddingBottom to 20px
-          sm: 'transparent', // For small screens and up, no bottom padding 
-        },
-        '@media (max-width: 600px)': {
-          height: '100vh',
-        },
-      }}>
+    <> 
+       
         <Box sx={{ padding: 2 }}>
           {loading && <Typography align="center">Loading...</Typography>}
           {errorMessage ? (
@@ -265,14 +203,14 @@ const NotificationPage = () => {
               display: 'flex',
              justifyContent: 'center',
              alignItems: 'center',
-             height: '50vh',  // Full viewport height
-             width: '100%'
+             width: '100%',
+            minHeight: "65vh"
          }}
        >
             <Typography
             align="center"
             sx={{
-              color: { xs: 'textSecondary', md: 'white' } // White on desktop, textSecondary on mobile
+              color: { xs: 'textSecondary', md: '#000' } // White on desktop, textSecondary on mobile
             }}
           >{errorMessage}</Typography>
            </Box>
@@ -285,8 +223,7 @@ const NotificationPage = () => {
               {renderOffers()}
             </Box>
           )}
-        </Box>
-      </Container>
+        </Box> 
       <Modal open={openModal} onClose={handleCloseModal}>
         <Box sx={{
           position: 'absolute',
@@ -328,11 +265,10 @@ const NotificationPage = () => {
         offer={selectedOffer}
         userId={userId}
       />
+ 
 
-      <DriverFooter/>
-      </div>
     </>
   );
 };
 
-export default NotificationPage;
+export default PendingJobs;

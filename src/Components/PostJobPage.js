@@ -1,13 +1,16 @@
 import React, { useState, useEffect  } from 'react';
-import { TextField, Button, MenuItem, Container, Typography, Box, Grid, Autocomplete  } from '@mui/material';
+import { TextField, Button, MenuItem, Container, Typography, Box, Grid, Autocomplete,
+     Dialog, DialogActions, DialogContent, DialogTitle
+  } from '@mui/material';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
 import CarNavbar from "./CarNavbar";
 import API from '../Components/services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Footer from "./Footer"; 
-import axios from 'axios';
+//import axios from 'axios';
+import { Helmet } from "react-helmet-async";
 
 const serviceTypes = ["Rideshare", "Private", "Delivery", "SCHOOL", "BUSINESS", "Intercity Cargo", "Travel"];
 //const statusTypes = ["published", "draft"];
@@ -25,31 +28,44 @@ const currencies = [
 const PostJobPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
+    const [modalMessage, setModalMessage] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+    //const [isProfileComplete, setIsProfileComplete] = useState(true);
 
     useEffect(() => {
         const checkUserProfile = async () => {
             try {
                 const userId = localStorage.getItem("userId");
                 if (!userId) {
-                    navigate("/login"); // Redirect if user is not logged in
-                    return;
+                  //  navigate("/login"); // Redirect if user is not logged in
+                 //   return;
                 }
 
                 const response = await API.get(`/users/${userId}`);
                 const profileData = response.data;
 
+              //  console.log(profileData);
+
                 // Define required fields
-                const requiredFields = ["idNumber", "dateOfBirth", "vehicleType", "uploadID", "uploadLicense"]; // Adjust as needed
+                const requiredFields = ["idNumber", "dateOfBirth", "area", "vehicleType", "uploadID", "uploadLicense", "profileImage"]; // Adjust as needed
                 const missingFields = requiredFields.filter(field => !profileData[field]);
 
                 if (missingFields.length > 0) {
-                    navigate("/carowner-profile"); // Redirect to profile edit page if any field is empty
+                   // navigate("/carowner-profile"); // Redirect to profile edit page if any field is empty
+                   // setModalMessage('Please complete your profile to be able to post a job.');
+                    //setShowModal(true);
+                    setProfileDialogOpen(true);
+                    setIsLoading(false);
+                   // setIsProfileComplete(false);
                 } else {
                     setIsLoading(false); // Allow form to render if profile is complete
                 }
             } catch (error) {
                 console.error("Error fetching profile:", error);
                 navigate("/carowner-profile"); // Redirect on error
+               //setModalMessage('Please complete your profile to be able to post a job.');
+              // setShowModal(true);
             }
         };
 
@@ -63,12 +79,13 @@ const PostJobPage = () => {
     const [pay, setPay] = useState('');
     const [area, setArea] = useState('');
     const [serviceType, setServiceType] = useState('');
-    const [modalMessage, setModalMessage] = useState("");
-    const [showModal, setShowModal] = useState(false);
+   
    // const [image, setImage] = useState(null);
     const [country, setCountry] = useState('');
     const [city, setCity] = useState('');
     const [cities, setCities] = useState([]);
+
+    const [states, setStates] = useState([]);
 
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -88,7 +105,6 @@ const PostJobPage = () => {
         currency: '',
         shift: '',
         pay: '',
-        location: '',
         serviceType: '',
         country: '',
         city: '',
@@ -98,28 +114,59 @@ const PostJobPage = () => {
     useEffect(() => {
         // Fetch cities when country changes
         if (country) {
-            fetchCities(country);
+            fetchStates(country);
+            if(area){
+                fetchCities(country, area);
+            }
+            
         }
-    }, [country]);
+    }, [country, area]);
 
-    const fetchCities = async (countryCode) => {
+    const fetchCities = async (countryCode, area) => {
         if( countryCode === 'Spain'){
             countryCode = 'ES';
         } else if( countryCode === 'France' ){
             countryCode = 'FR';
         } else if( countryCode === 'Germany' ){
-            countryCode = 'GE';
+            countryCode = 'DE';
         } else if( countryCode === 'Egypt' ){
             countryCode = 'EG';
         }
 
         try {
-            const response = await axios.get(`http://api.geonames.org/searchJSON?country=${countryCode}&maxRows=1000&username=otknews2025`);
+            const response = await API.get(`/users/city/${countryCode}/${area}`);
             if (response.data && response.data.geonames) {
                 setCities(response.data.geonames.map(city => city.name));
             }
         } catch (error) {
             console.error('Error fetching cities:', error);
+        }
+    };
+
+
+    const fetchStates = async (countryCode) => {
+        // Use a mapping object for better scalability and readability
+        const countryMapping = {
+            'Spain': 'ES',
+            'France': 'FR',
+            'Germany': 'DE', // Corrected country code for Germany
+            'Egypt': 'EG'
+        };
+    
+        // Default to the provided countryCode if it's not mapped
+        const mappedCountryCode = countryMapping[countryCode] || countryCode;
+    
+        try {
+            const response = await API.get(`/users/state/${mappedCountryCode}`);
+            
+            if (response.data && response.data.geonames) {
+                // Update states only if data is valid
+                setStates(response.data.geonames.map(state => state.adminName1));
+            } else {
+                console.error('No geonames data found in response');
+            }
+        } catch (error) {
+            console.error('Error fetching states:', error);
         }
     };
 
@@ -217,76 +264,41 @@ const PostJobPage = () => {
 
     return (
         <>
+           <Helmet>
+                <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            </Helmet>
+            <div className="min-h-screen flex flex-col justify-between">
             <CarNavbar />
-            <Container maxWidth="md" sx={{
-                mt: { xs: 0, sm: 4 },
-                mb: { xs: 0, sm: 4 },
-                p: 3,
-                backgroundColor: "#f9f9f9",
-                borderRadius: { xs: 0, sm: 2 },
-                boxShadow: 3,
-                overflow: "auto",
-            }}>
+                         <Container maxWidth="lg" sx={{
+                                             minHeight: {
+                                                xs: '60vh', // 60% of the viewport height on mobile
+                                                sm: '60vh', // Keep 70vh on small screens and up
+                                              },
+                                         maxHeight: {
+                                            xs: '80vh', // For mobile (extra small screens), set maxHeight to 100%
+                                            sm: '100%', // For small screens and up, set maxHeight to 80vh
+                                          },
+                                        backgroundColor: {
+                                            xs: '#fff', // For mobile, set background color to white
+                                            sm: '#fff', // For small screens and up, use transparent (or any other color you prefer)
+                                          },
+                                        overflowY: 'scroll',
+                                        '&:hover': {
+                                          overflowY: 'scroll',
+                                        },
+                                        '&::-webkit-scrollbar': {
+                                          display: 'none',
+                                        },
+                                        scrollbarWidth: 'none',
+                                        paddingBottom: {
+                                            xs: '20px', // For mobile, set paddingBottom to 20px
+                                            sm: '0', // For small screens and up, no bottom padding
+                                          },
+                                    }}>
                 <Typography variant="h6" gutterBottom>Post a Job</Typography>
                 <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-
-                 {/* Shift */}
-    <Grid item xs={12} sm={6}>
-        <TextField
-            select
-            label="Shift"
-            fullWidth
-            margin="normal"
-            size="small"
-            value={shift}
-            onChange={(e) => setShift(e.target.value)}
-            error={!!formErrors.shift}
-            helperText={formErrors.shift}
-        >
-            {shiftTypes.map((shift) => (
-                <MenuItem key={shift} value={shift}>{shift}</MenuItem>
-            ))}
-        </TextField>
-    </Grid>
-
-    {/* Pay & Currency */}
-    <Grid item xs={12} sm={6}>
-        <Box display="flex" gap={2} alignItems="center">
-            <TextField
-                label="Pay"
-                fullWidth
-                margin="normal"
-                type="number"
-                size="small"
-                value={pay}
-                onChange={(e) => setPay(e.target.value)}
-                error={!!formErrors.pay}
-                helperText={formErrors.pay}
-            />
-            <TextField
-                select
-                label="Currency"
-                margin="normal"
-                size="small"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                error={!!formErrors.currency}
-                helperText={formErrors.currency}
-                sx={{ minWidth: 120 }}
-            >
-                {currencies.map((curr) => (
-                    <MenuItem key={curr.code} value={curr.code}>
-                        {curr.label}
-                    </MenuItem>
-                ))}
-            </TextField>
-        </Box>
-    </Grid>
-
-    {/* Service Type */}
-    <Grid item xs={12} sm={6}>
-    <Box display="flex" gap={2} alignItems="center" sx={{ flexDirection: { xs: "column", sm: "row" } }}>
+  {/* Service Type */}
+  <Grid item xs={12} sm={6}>
     <Autocomplete
             fullWidth
             value={serviceType}
@@ -313,60 +325,15 @@ const PostJobPage = () => {
             inputValue={searchQuery}
             onInputChange={handleSearchChange}
         />
-        <TextField
-            select
-            label="Country"
-            fullWidth
-            margin="normal"
-            size="small"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            error={!!formErrors.country}
-            helperText={formErrors.country}
-        >
-            {coutryies.map((country) => (
-                <MenuItem key={country} value={country}>{country}</MenuItem>
-            ))}
-        </TextField>
-        </Box>
+         
     </Grid>
 
-    {/* Location */}
-    <Grid item xs={12} sm={6}>
-       <Box display="flex" gap={2} alignItems="center">
-       <Autocomplete
-                                fullWidth
-                                value={city}
-                                onChange={(e, newValue) => setCity(newValue)}
-                                options={cities}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="City"
-                                        fullWidth
-                                        margin="normal"
-                                        size="small"
-                                        error={!!formErrors.city}
-                                        helperText={formErrors.city}
-                                    />
-                                )}
-                            />
-        <TextField
-            label="Area"
-            fullWidth
-            margin="normal"
-            size="small"
-            value={area}
-            onChange={(e) => setArea(e.target.value)}
-            placeholder="Area"
-            error={!!formErrors.area}
-            helperText={formErrors.area}
-        />
-        </Box>
-    </Grid>
 
-   
-   
+                <Grid container spacing={2} sx={{
+                mt: { xs: 0, sm: "2px" }, 
+            }}>
+
+               
 
      {/* Start Date */}
      <Grid item xs={12} sm={6}>
@@ -417,9 +384,141 @@ const PostJobPage = () => {
         {dateError && <Typography color="error" variant="body2">{dateError}</Typography>}
     </Grid>
 
+                 {/* Shift */}
+    <Grid item xs={12} sm={6}>
+         
+
+        <Autocomplete
+                                fullWidth
+                                value={shift}
+                                onChange={(e, newValue) => setShift(newValue)}
+                                options={shiftTypes}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Shift"
+                                        fullWidth
+                                        margin="normal"
+                                        size="small"
+                                        error={!!formErrors.shift}
+                                        helperText={formErrors.shift}
+                                    />
+                                )}
+                            />
+    </Grid>
+
+    {/* Pay & Currency */}
+    <Grid item xs={12} sm={6}>
+        <Box display="flex" gap={2} alignItems="center">
+            <TextField
+                label="Pay"
+                fullWidth
+                margin="normal"
+                type="number"
+                size="small"
+                value={pay}
+                onChange={(e) => setPay(e.target.value)}
+                error={!!formErrors.pay}
+                helperText={formErrors.pay}
+            />
+            <TextField
+                select
+                label="Currency"
+                margin="normal"
+                size="small"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                error={!!formErrors.currency}
+                helperText={formErrors.currency}
+                sx={{ minWidth: 120 }}
+            >
+                {currencies.map((curr) => (
+                    <MenuItem key={curr.code} value={curr.code}>
+                        {curr.label}
+                    </MenuItem>
+                ))}
+            </TextField>
+        </Box>
+    </Grid>
+
+   
+
+    {/* Location */}
+    <Grid item xs={12} sm={12}>
+    <Box 
+  display="flex" 
+  gap={2} 
+  alignItems="center" 
+  sx={{ 
+    flexDirection: { xs: 'column', sm: 'row' }, // 'column' on mobile (xs), 'row' on larger screens (sm and above)
+  }}
+>
+
+        <Autocomplete
+                                fullWidth
+                                value={country}
+                                onChange={(e, newValue) => setCountry(newValue)}
+                                options={coutryies}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Country"
+                                        fullWidth
+                                        margin="normal"
+                                        size="small"
+                                        error={!!formErrors.country}
+                                        helperText={formErrors.country}
+                                    />
+                                )}
+                            />
+
+        <Autocomplete
+                                fullWidth
+                                value={area}
+                                onChange={(e, newValue) => setArea(newValue)}
+                                options={states}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="State"
+                                        fullWidth
+                                        margin="normal"
+                                        size="small"
+                                        error={!!formErrors.area}
+                                        helperText={formErrors.area}
+                                    />
+                                )}
+                            />
+
+       <Autocomplete
+                                fullWidth
+                                value={city}
+                                onChange={(e, newValue) => setCity(newValue)}
+                                options={cities}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="City"
+                                        fullWidth
+                                        margin="normal"
+                                        size="small"
+                                        error={!!formErrors.city}
+                                        helperText={formErrors.city}
+                                    />
+                                )}
+                            />
+        
+        </Box>
+    </Grid>
+
+   
+   
+
+    
+
     {/* Submit Button */}
     <Grid item xs={12} display="flex" justifyContent="center" mt={1}>
-        <Button variant="contained" className="!bg-orange-500 hover:!bg-orange-600 text-white" type="submit" sx={{ width: { xs: '100%', sm: '200px' } }}>
+        <Button variant="contained" className="!bg-[#fe8735] hover:!bg-orange-600 text-white" type="submit" sx={{ width: { xs: '100%', sm: '200px' } }}>
             Submit Job
         </Button>
     </Grid>
@@ -449,6 +548,15 @@ const PostJobPage = () => {
       )}
 
       <Footer/>
+      </div>
+
+      <Dialog open={profileDialogOpen}>
+                      <DialogTitle>Profile Incomplete</DialogTitle>
+                      <DialogContent>
+                          <Typography>Please complete your profile before proceeding.</Typography>
+                          <Link to="/carowner-profile" style={{ color: "#6698f7" }}>Go to Profile</Link>
+                      </DialogContent>
+                  </Dialog>
 
         </>
     );

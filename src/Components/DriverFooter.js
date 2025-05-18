@@ -72,7 +72,8 @@ const DriverFooter = ({ stepstle }) => {
       </Box>
 
       {/* Footer Menu for Mobile View */}
-      <div className="flex justify-around text-3xl lg:hidden text-[#5a3623] mt-4">
+      <div className={`flex absolute-on-mobile bottom-0 fixed justify-around text-3xl lg:hidden text-[#5a3623] mt-4 w-[100%] bg-[#ffffff]`}>
+
         <a href="/myaccount" className={`text-center ${isActive('/myaccount') ? 'text-blue-500' : ''}`}>
           <GoHome />
         </a>

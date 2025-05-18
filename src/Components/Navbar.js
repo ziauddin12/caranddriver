@@ -259,7 +259,7 @@ function Navbar() {
           <div className="navbar-signup">
            
           {!isLogin ? (
-        <button className="signup-button bg-orange-500 hover:bg-orange-500" onClick={handleRegisterClick}>
+        <button className="signup-button bg-[#fe8735] hover:bg-orange-500" onClick={handleRegisterClick}>
            {t("signup")}
         </button>
       ) : (

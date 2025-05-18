@@ -180,7 +180,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
               </NavLink>
             </li>
 
-            {isLogin && (
+          {/*  {isLogin && (
    <li className="lg:hidden">
     <NavLink
                 to={`/profile/${userId}`}
@@ -188,7 +188,7 @@ const userImage = `${IMAGE_API}${userImageSub}`;
               >
                 {t("profile")}
                 </NavLink>  </li>
-)}
+)}*/}
 
             {isLogin && (
   <li className="cursor-pointer text-white" onClick={handleLogout}>

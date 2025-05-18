@@ -2,13 +2,10 @@ import React, { useEffect, useState } from "react";
 //import formimg from "../assets/formimg.jpeg";
 import "./Model.css";
 
-import { GoHome } from "react-icons/go";
-import { TfiEmail } from "react-icons/tfi";
-import { GoBell } from "react-icons/go";
-import { TfiWallet } from "react-icons/tfi";
-import { CiUser } from "react-icons/ci"; 
+import DriverFooter from "./DriverFooter"; 
 //import { IoIosArrowDown } from "react-icons/io";
-import { FaPlus } from "react-icons/fa";
+//import { FaPlus } from "react-icons/fa";
+import { Container } from '@mui/material';
 import cloudcomputing from "../assets/cloudcomputing.png";
 import { CiStar } from "react-icons/ci";
 //import Navbar from "./Navbar";
@@ -97,7 +94,34 @@ const formattedDate = formatDate(userData?.dateOfBirth);
   
   return (
     <>
+    <div className="min-h-screen flex flex-col justify-between">
     <DriverNavbar/>
+    <Container maxWidth="lg" sx={{
+                                 minHeight: {
+                                    xs: '60vh', // 60% of the viewport height on mobile
+                                    sm: '60vh', // Keep 70vh on small screens and up
+                                  },
+                             maxHeight: {
+                                xs: '75vh', // For mobile (extra small screens), set maxHeight to 100%
+                                sm: '100%', // For small screens and up, set maxHeight to 80vh
+                              },
+                            backgroundColor: {
+                                xs: '#fff', // For mobile, set background color to white
+                                sm: 'transparent', // For small screens and up, use transparent (or any other color you prefer)
+                              },
+                            overflowY: 'scroll',
+                            '&:hover': {
+                              overflowY: 'scroll',
+                            },
+                            '&::-webkit-scrollbar': {
+                              display: 'none',
+                            },
+                            scrollbarWidth: 'none',
+                            paddingBottom: {
+                                xs: '20px', // For mobile, set paddingBottom to 20px
+                                sm: '0', // For small screens and up, no bottom padding
+                              },
+                        }}>
       <div className=" bg-[#FFFFFF] p-5">
         <div className="  shadow-md max-w-6xl mx-auto mt-8 border-[1px]  lg:border-2 border-[#000000] text-[#000000] ">
           <div className=" pb-4 mt-5  mb-2 lg:mb-20  ">
@@ -290,34 +314,12 @@ const formattedDate = formatDate(userData?.dateOfBirth);
             </div>
           </div>
         </div>
- {/* Footer Section */}
  
-   
- <div>
-          {/* Black Bar for Web View */}
-          <div className="hidden lg:flex bg-black  mx-auto mt-9 justify-center max-w-6xl text-white py-4 text-center text-lg">
-          {t("rightsReserved")}
-          </div>
-
-          {/* Footer Menu for Mobile View */}
-          <div className="flex justify-around text-3xl lg:hidden text-[#5a3623] mt-4">
-            <a href="#"  className="text-center">
-              <GoHome />
-            </a>
-            <a href="#" className="text-center">
-              <TfiEmail />
-            </a>
-            <a href="#" className="text-center">
-              <GoBell />
-            </a>
-            <a href="#" className="text-center">
-              <TfiWallet />
-            </a>
-            <a href="#" className="text-center text-blue-500">
-              <CiUser />
-            </a>
-          </div>
-        </div>
+ 
+       </div> 
+       </Container>
+       {/* Footer Section */}
+       <DriverFooter/>
       </div>
     </>
   );

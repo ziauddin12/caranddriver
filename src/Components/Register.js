@@ -80,7 +80,7 @@ function Register({ nextStep }) {
 
   return (
     <>
-      <div style={{ backgroundColor: "#F4F4F4", height: "auto" }}>
+      <div className="min-h-screen bg-[#F4F4F4]">
         <Navbar />
         {/* <div> 
              <img src={registerImg} alt="Custom" />

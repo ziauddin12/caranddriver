@@ -80,9 +80,9 @@ function Login() {
           navigate('/verify-opt');
         } else {
           if (userType === 'driver') {
-            navigate('/driver-profile');
+            navigate('/myaccount');
           } else if (userType === 'carowner') {
-            navigate('/carowner-profile');
+            navigate('/dashboard');
           }
         }
 
